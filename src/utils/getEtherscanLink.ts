@@ -16,6 +16,9 @@ export function getMultichainScanLink(
     case ChainId.FANTOM:
       chainScanDomain = "ftmscan.com"
       break
+    case ChainId.POLYGON:
+      chainScanDomain = "polygonscan.com"
+      break
     case ChainId.OPTIMISM:
       chainScanDomain = "optimistic.etherscan.io"
       break

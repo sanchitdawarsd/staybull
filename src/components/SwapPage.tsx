@@ -234,7 +234,7 @@ const SwapPage = (props: Props): ReactElement => {
             </IconButton>
           </Box>
           {chainId &&
-            [ChainId.MAINNET, ChainId.HARDHAT].includes(chainId) &&
+            [ChainId.MAINNET, ChainId.POLYGON].includes(chainId) &&
             renderTokenListsWarning(openFrom, setOpenFrom, "from")}
           <Typography variant="subtitle1">
             {t("to").toLocaleUpperCase()}
@@ -252,7 +252,7 @@ const SwapPage = (props: Props): ReactElement => {
             isSwapFrom={false}
           />
           {chainId &&
-            [ChainId.MAINNET, ChainId.HARDHAT].includes(chainId) &&
+            [ChainId.MAINNET, ChainId.POLYGON].includes(chainId) &&
             renderTokenListsWarning(openTo, setOpenTo, "to")}
           <div style={{ height: "24px" }}></div>
 

@@ -148,7 +148,7 @@ export const SUPPORTED_NETWORKS: SupportedNetworks = {
     blockExplorerUrls: ["https://explorer.mainnet.aurora.dev"],
   },
   [ChainId.POLYGON]: {
-    chainId: "0x137",
+    chainId: hexlify(137),
     chainName: "POLYGON",
     nativeCurrency: nativeCurrencyEth,
     rpcUrls: ["https://polygon-mainnet.g.alchemy.com/v2/"],
@@ -170,7 +170,7 @@ export const DEV_SUPPORTED_NETWORKS: SupportedNetworks = {
     blockExplorerUrls: ["https://evm.evmos.dev"],
   },
   [ChainId.POLYGON]: {
-    chainId: "0x137",
+    chainId: "0x89",
     chainName: "POLYGON",
     nativeCurrency: nativeCurrencyEth,
     rpcUrls: ["https://polygon-mainnet.g.alchemy.com/v2/"],

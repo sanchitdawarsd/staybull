@@ -338,6 +338,7 @@ export async function getPoolsBaseData(
   const poolsData = await Promise.all(
     targetPools.map((poolName) => getSwapInfo(library, chainId, poolName)),
   )
+  console.log("heyy4", poolsData)
   return poolsData.filter(Boolean) as SwapInfo[]
 }
 
@@ -391,9 +392,9 @@ export async function getSwapInfo(
       poolAddress,
       META_SWAP_ABI,
     )
-
+    console.log("heyy2", swapContractMulticall)
     const lpTokenContract = createMultiCallContract<Erc20>(lpToken, ERC20_ABI)
-
+    console.log("heyy3", ethCallProvider)
     const [swapStorage, aParameter, isPaused, virtualPrice] =
       await ethCallProvider.all([
         swapContractMulticall.swapStorage(),
@@ -401,12 +402,12 @@ export async function getSwapInfo(
         swapContractMulticall.paused(),
         swapContractMulticall.getVirtualPrice(),
       ])
+    console.log("heyy5", swapStorage, aParameter, isPaused, virtualPrice)
     const { adminFee, swapFee, futureA, futureATime } = swapStorage
     const [lpTokenSupply, ...tokenBalances] = await ethCallProvider.all([
       lpTokenContract.totalSupply(),
       ...tokens.map((_, i) => swapContractMulticall.getTokenBalance(i)),
     ])
-
     const underlyingTokenBalances = isMetaSwap ? [] : null // TODO
 
     const data = {
@@ -441,6 +442,7 @@ export async function getSwapInfo(
       miniChefRewardsPid: rewardsPid,
       isSynthetic,
     }
+    //console.log("heyy2", data)
     return isMetaSwap ? (data as MetaSwapInfo) : (data as NonMetaSwapInfo)
   } catch (e) {
     const error = new Error(

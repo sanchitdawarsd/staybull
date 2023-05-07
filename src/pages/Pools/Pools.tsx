@@ -36,6 +36,7 @@ function Pools(): ReactElement | null {
   const { account, chainId } = useActiveWeb3React()
   const expandedPools = useContext(ExpandedPoolsContext)
   const pools = expandedPools.data.byName
+  console.log(pools, "heyy")
   const userState = useContext(UserStateContext)
   const approveAndMigrate = useApproveAndMigrate()
   const { t } = useTranslation()
