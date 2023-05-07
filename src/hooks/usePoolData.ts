@@ -178,7 +178,7 @@ export default function usePoolData(name?: string): PoolDataHookReturnType {
           chainId,
           tokenPricesUSD,
         )
-
+        console.log("price", priceDataForPool)
         // Pool token data
         const { aprs, amountsStaked, claimableAmount } =
           await getThirdPartyDataForPool(
@@ -324,7 +324,7 @@ export default function usePoolData(name?: string): PoolDataHookReturnType {
           poolAddress: expandedPool.poolAddress,
 
           lpTokenPriceUSD: priceDataForPool.lpTokenPriceUSD, // USD
-          reserve: priceDataForPool.tokenBalancesSumUSD, // USD
+          reserve: priceDataForPool.totalLocked, // USD
 
           volume: oneDayVolume ? parseUnits(oneDayVolume, 18) : null, // rm - api
           utilization: utilization ? parseUnits(utilization, 18) : null, // rm - api
