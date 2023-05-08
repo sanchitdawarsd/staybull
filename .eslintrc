@@ -18,7 +18,7 @@
     "project": ["./tsconfig.json", "./cypress/tsconfig.json"],
     "sourceType": "module"
   },
-  "plugins": ["jest"],
+  "plugins": ["jest", "react"],
   "env": {
     "browser": true,
     "es6": true,
