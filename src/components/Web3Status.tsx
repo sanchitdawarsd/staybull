@@ -38,7 +38,8 @@ const Web3Status = (): ReactElement => {
         color="secondary"
         onClick={(): void => setModalOpen(true)}
         data-testid="accountDetailButton"
-        endIcon={account && <Identicon />}
+        startIcon={account && <Identicon />}
+        sx={{ py: 3, borderRadius: 0 }}
       >
         <Typography variant="body1" whiteSpace="nowrap">
           {account

@@ -4,7 +4,7 @@ import {
   Button,
   Divider,
   Drawer,
-  IconButton,
+  // IconButton,
   Stack,
   Toolbar,
   styled,
@@ -12,15 +12,15 @@ import {
   useTheme,
 } from "@mui/material"
 import { IS_SDL_LIVE, SDL_TOKEN } from "../constants"
-import { Menu as MenuIcon, MoreVert } from "@mui/icons-material"
+// import { Menu as MenuIcon, MoreVert } from "@mui/icons-material"
 import { NavLink, NavLinkProps, useLocation } from "react-router-dom"
 import React, { ReactElement, useContext, useEffect, useState } from "react"
 
 import { AppState } from "../state"
-import NetworkDisplay from "./NetworkDisplay"
+// import NetworkDisplay from "./NetworkDisplay"
 import { RewardsBalancesContext } from "../providers/RewardsBalancesProvider"
-import SaddleLogo from "./SaddleLogo"
-import { ReactComponent as SdlTokenIcon } from "../assets/icons/sdl.svg"
+import BullIcon from "../assets/bull-icon.png"
+import BullLogo from "./BullLogo"
 import SiteSettingsMenu from "./SiteSettingsMenu"
 import TokenClaimDialog from "./TokenClaimDialog"
 import Web3Status from "./Web3Status"
@@ -42,6 +42,7 @@ const NavMenu = styled(NavLink)<NavLinkProps & { selected: boolean }>(
       color: theme.palette.text.primary,
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
+      border: !selected ? "none" : "4px solid #009c19",
     }
   },
 )
@@ -54,20 +55,20 @@ function TopMenu(): ReactElement {
   const isUnderLaptopSize = useMediaQuery(theme.breakpoints.down("lg"))
   const { tokenPricesUSD } = useSelector((state: AppState) => state.application)
   const sdlPrice = tokenPricesUSD?.[SDL_TOKEN.symbol]
-  const handleSettingMenu = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleMoreMenu = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
-    if (isUnderLaptopSize) {
-      setDrawerOpen(true)
-    } else {
-      handleSettingMenu(event)
-    }
-  }
+  // const handleSettingMenu = (
+  //   event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  // ) => {
+  //   setAnchorEl(event.currentTarget)
+  // }
+  // const handleMoreMenu = (
+  //   event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  // ) => {
+  //   if (isUnderLaptopSize) {
+  //     setDrawerOpen(true)
+  //   } else {
+  //     handleSettingMenu(event)
+  //   }
+  // }
 
   useEffect(() => {
     document
@@ -76,12 +77,26 @@ function TopMenu(): ReactElement {
   }, [theme.palette.background.default])
 
   return (
-    <AppBar position="static" elevation={0}>
-      <Toolbar data-testid="topMenuContainer" sx={{ xs: 0, lg: 7 }}>
-        <Box display="flex" width="100%" alignItems="center" my={3}>
-          <Box display="flex" flex={1}>
+    <AppBar position="static" elevation={0} sx={{ border: "none" }}>
+      <Toolbar
+        data-testid="topMenuContainer"
+        sx={{
+          xs: 0,
+          lg: 7,
+          backgroundColor: "#000000",
+        }}
+      >
+        <Box
+          display="flex"
+          width="100%"
+          alignItems="center"
+          my={3}
+          pl={5}
+          pr={9}
+        >
+          <Box display="flex" flex={0}>
             <NavLink to="/">
-              <SaddleLogo
+              <BullLogo
                 height={isUnderLaptopSize ? "40px" : "80px"}
                 color="#000"
               />
@@ -94,7 +109,7 @@ function TopMenu(): ReactElement {
             right="50%"
             flex={1}
             direction="row"
-            spacing={4}
+            spacing={2}
             justifyContent="center"
             padding={theme.spacing(1, 3)}
           >
@@ -112,8 +127,8 @@ function TopMenu(): ReactElement {
             <Box display={isUnderLaptopSize ? "none" : "block"}>
               <Web3Status />
             </Box>
-            <NetworkDisplay onClick={handleSettingMenu} />
-            <IconButton
+            {/* <NetworkDisplay onClick={handleSettingMenu} /> */}
+            {/* <IconButton
               onClick={handleMoreMenu}
               data-testid="settingsMenuBtn"
               sx={{
@@ -130,7 +145,7 @@ function TopMenu(): ReactElement {
               <MenuIcon
                 sx={{ display: !isUnderLaptopSize ? "none" : "block" }}
               />
-            </IconButton>
+            </IconButton> */}
           </Stack>
         </Box>
 
@@ -175,11 +190,12 @@ function RewardsButton({
 
   return IS_SDL_LIVE ? (
     <Button
-      variant="contained"
+      variant="outlined"
       color="primary"
       data-testid="rewardButton"
       onClick={() => setCurrentModal("tokenClaim")}
-      endIcon={<SdlTokenIcon width={20} height={20} />}
+      endIcon={<img src={BullIcon} width={20} height={20} />}
+      sx={{ py: 3, borderRadius: 10 }}
     >
       {formattedTotal}
     </Button>
@@ -195,28 +211,33 @@ function MenuList() {
   const activeTab = pathname.split("/")[1] as ActiveTabType
   return (
     <React.Fragment>
-      <NavMenu data-testid="swapNavLink" to="/" selected={activeTab === ""}>
+      <NavMenu
+        data-testid="swapNavLink"
+        to="/"
+        selected={activeTab === ""}
+        sx={{ px: 3 }}
+      >
         {t("swap")}
       </NavMenu>
 
-      <NavMenu to="/pools" selected={activeTab === "pools"}>
+      <NavMenu to="/pools" selected={activeTab === "pools"} sx={{ px: 3 }}>
         {t("pools")}
       </NavMenu>
 
       {areGaugesActive(chainId) && (
-        <NavMenu to="/farm" selected={activeTab === "farm"}>
+        <NavMenu to="/farm" selected={activeTab === "farm"} sx={{ px: 3 }}>
           {t("farm")}
         </NavMenu>
       )}
 
       {isMainnet(chainId) && (
-        <NavMenu to="/vesdl" selected={activeTab === "vesdl"}>
-          {t("veSdl")}
+        <NavMenu to="/vesdl" selected={activeTab === "vesdl"} sx={{ px: 3 }}>
+          {t("Stake")}
         </NavMenu>
       )}
 
-      <NavMenu to="/risk" selected={activeTab === "risk"}>
-        {t("risk")}
+      <NavMenu to="/risk" selected={activeTab === "risk"} sx={{ px: 3 }}>
+        {t("Options")}
       </NavMenu>
     </React.Fragment>
   )
@@ -233,13 +254,14 @@ function SDLPrice({ sdlPrice }: SDLPriceProps): ReactElement | null {
     "https://ethereum.sushi.com/swap?inputCurrency=ETH&outputCurrency=0xf1Dc500FdE233A4055e25e5BbF516372BC4F6871"
   return (
     <Button
-      variant="contained"
+      variant="outlined"
       color="primary"
       data-testid="sdlPriceButton"
       href={SUSHI_WETH_SDL_POOL_URL}
       target="_blank"
-      startIcon={<SdlTokenIcon width={20} height={20} />}
+      startIcon={<img src={BullIcon} width={20} height={20} />}
       style={{ minWidth: 100 }}
+      sx={{ py: 3, borderRadius: 10 }}
     >
       {`$${sdlPrice.toFixed(2)}`}
     </Button>

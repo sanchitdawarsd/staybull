@@ -20,7 +20,7 @@ export type ThemeSettingsContextProps = {
 }
 
 const initialState: ThemeSettingsContextProps = {
-  themeMode: "system",
+  themeMode: "dark",
   onChangeMode: () => undefined,
 }
 

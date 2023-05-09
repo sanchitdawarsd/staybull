@@ -182,7 +182,7 @@ const SwapPage = (props: Props): ReactElement => {
 
   return (
     <Container maxWidth="sm" sx={{ pt: 5, pb: 20 }}>
-      <Paper style={{ borderRadius: 28 }}>
+      <Paper style={{ borderRadius: 0 }}>
         <Box p={{ xs: 3, md: 4 }} flex={1}>
           <Box>
             <Box display="flex">
@@ -376,8 +376,8 @@ const SwapPage = (props: Props): ReactElement => {
         onClick={(): void => {
           setCurrentModal("review")
         }}
-        disabled={!!error || +toState.value <= 0}
-        sx={{ mt: 3 }}
+        // disabled={!!error || +toState.value <= 0}
+        sx={{ mt: 3, color: "#000000", borderRadius: 0 }}
       >
         {t("swap")}
       </Button>

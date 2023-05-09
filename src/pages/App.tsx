@@ -33,6 +33,7 @@ import { useActiveWeb3React } from "../hooks"
 import usePoller from "../hooks/usePoller"
 import { useSdlWethSushiPairContract } from "../hooks/useContract"
 import { useTheme } from "@mui/material"
+import Footer from "../components/Footer"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -66,6 +67,7 @@ export default function App(): ReactElement {
                                 <Suspense fallback={null}>
                                   <Pages />
                                 </Suspense>
+                                <Footer />
                                 <WrongNetworkModal />
                                 <Version />
                                 <ToastContainer
