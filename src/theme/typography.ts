@@ -67,8 +67,13 @@ const typography: TypographyOptions = {
     lineHeight: 16 / 12,
   },
   caption: {
-    fontSize: pxToRem(12),
+    fontSize: pxToRem(16),
     lineHeight: 16 / 12,
+    fontFamily: "Poppins",
+    fontWeight: "700",
+    backgroundImage: `linear-gradient(180deg, #F3AAFB 0%, #B4CBF7 48.96%, #C0F7F0 100%)`,
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
   },
   button: {
     fontWeight: 500,

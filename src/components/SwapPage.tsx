@@ -186,7 +186,7 @@ const SwapPage = (props: Props): ReactElement => {
       direction="row"
       justifyContent="center"
       columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-      sx={{ marginTop: "20px" }}
+      sx={{ marginY: "30px" }}
     >
       <Grid
         item

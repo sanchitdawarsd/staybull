@@ -22,12 +22,13 @@ import usePoolData, { PoolDataType } from "../hooks/usePoolData"
 
 import { CheckCircleOutline } from "@mui/icons-material"
 import GaugeRewardsDisplay from "./GaugeRewardsDisplay"
-import TokenIcon from "./TokenIcon"
 import { Zero } from "@ethersproject/constants"
 import { areGaugesActive } from "../utils/gauges"
 import { useActiveWeb3React } from "../hooks"
 import { useHistory } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import TokenIcon from "./TokenIcon"
+// import BullIcon from "../assets/bull-icon.png"
 
 interface Props {
   poolRoute: string
@@ -111,12 +112,11 @@ export default function PoolOverview({
           poolData.isGuarded || shouldMigrate
             ? theme.palette.warning.main
             : theme.palette.primary.light,
-        borderRadius: "20px",
       }}
       data-testid="poolOverview"
     >
       <Grid container alignItems="center" spacing={2}>
-        <Grid item xs={12} lg={3}>
+        <Grid item xs={12} lg={2}>
           <Box>
             <Box
               display="flex"
@@ -134,6 +134,7 @@ export default function PoolOverview({
                       : undefined,
                     mr: 1,
                     width: "fit-content",
+                    color: "#ffffff",
                   }}
                 >
                   {formattedData.name}
@@ -152,11 +153,12 @@ export default function PoolOverview({
             )}
           </Box>
         </Grid>
-        <Grid item xs={12} lg={2.5}>
+        <Grid item xs={12} lg={1.5}>
           <Stack spacing={1} direction={{ xs: "row", lg: "column" }}>
             {poolData.tokens.length > 0 ? (
               poolData.tokens.map(({ symbol, isOnTokenLists }) => (
                 <Box display="flex" alignItems="center" key={symbol}>
+                  {/* <img alt="icon" src={BullIcon} /> */}
                   <TokenIcon alt="icon" symbol={symbol} width="24px" />
                   <Typography marginLeft={1} sx={{ wordBreak: "break-all" }}>
                     {symbol}
@@ -176,28 +178,38 @@ export default function PoolOverview({
           </Stack>
         </Grid>
         <StyledGrid item xs={6} lg={2} disabled={disableText}>
-          <Typography variant="subtitle1" color="primary.light">
+          <Typography
+            component="div"
+            variant="caption"
+            sx={{ marginBottom: "8px" }}
+          >
             TVL
           </Typography>
-          <Typography component="span">{`$${formattedData.reserve}`}</Typography>
+          <Typography
+            component="div"
+            sx={{ fontSize: "12px", marginBottom: "8px" }}
+          >{`$${formattedData.reserve}`}</Typography>
 
           {formattedData.volume && (
             <div>
-              <Typography variant="subtitle1" color="primary.light">{`${t(
-                "24HrVolume",
-              )}`}</Typography>
-              <Typography component="span">{formattedData.volume}</Typography>
+              <Typography
+                component="div"
+                variant="caption"
+                sx={{ marginBottom: "8px" }}
+              >{`${t("24HrVolume")}`}</Typography>
+              <Typography
+                component="div"
+                sx={{ fontSize: "12px", marginBottom: "8px" }}
+              >
+                {formattedData.volume}
+              </Typography>
             </div>
           )}
         </StyledGrid>
         <StyledGrid item xs={6} lg={2.5} disabled={disableText}>
           {formattedData.apy && (
             <div>
-              <Typography
-                component="span"
-                variant="subtitle1"
-                color="secondary"
-              >
+              <Typography component="span" variant="caption">
                 {`${t("apy")}`}:{" "}
               </Typography>
               <Typography component="span">{formattedData.apy}</Typography>
@@ -226,8 +238,8 @@ export default function PoolOverview({
             <MinichefRewards poolData={poolData} />
           )}
         </StyledGrid>
-        <Grid item xs={12} lg={2}>
-          <Stack spacing={2}>
+        <Grid item xs={12} lg={4}>
+          <Stack direction="row" spacing={2}>
             {shouldMigrate ? (
               <Button
                 variant="contained"
@@ -244,9 +256,10 @@ export default function PoolOverview({
             ) : (
               <Button
                 variant="contained"
-                color={
-                  poolData.isGuarded || shouldMigrate ? "warning" : "primary"
-                }
+                sx={{
+                  borderRadius: "0px",
+                  background: "#009c19",
+                }}
                 fullWidth
                 size="large"
                 disabled={poolData?.isPaused || poolData.isGuarded}
@@ -257,6 +270,9 @@ export default function PoolOverview({
               </Button>
             )}
             <Button
+              sx={{
+                borderRadius: "0px",
+              }}
               color={
                 poolData.isGuarded || shouldMigrate ? "warning" : "primary"
               }

@@ -57,7 +57,7 @@ const lightPalette: PaletteOptions | undefined = {
   },
   secondary: {
     main: "#47998F",
-    dark: "#337F77",
+    dark: "#009c19",
     light: "#78C4BB",
   },
   info: {
@@ -76,8 +76,8 @@ const lightPalette: PaletteOptions | undefined = {
     disabled: "#A7A7A7",
   },
   success: {
-    main: "#06D7D7",
-    dark: "#037777",
+    main: "#009c19",
+    dark: "#009c19",
     light: "#83EBEB",
     alert: {
       background: "#E6FFFF",
@@ -127,8 +127,8 @@ const darkPalette: PaletteOptions | undefined = {
     light: "#009c19",
   },
   secondary: {
-    main: "#47998F",
-    dark: "#337F77",
+    main: "#009c19",
+    dark: "#009c19",
     light: "#78C4BB",
   },
   info: {
@@ -147,7 +147,7 @@ const darkPalette: PaletteOptions | undefined = {
   },
   success: {
     main: "#06D7D7",
-    dark: "#037777",
+    dark: "#009c19",
     light: "#009c19",
     alert: {
       background: "#E6FFFF",

@@ -30,6 +30,7 @@ import { isMainnet } from "../hooks/useContract"
 import { useActiveWeb3React } from "../hooks"
 import { useSelector } from "react-redux"
 import { useTranslation } from "react-i18next"
+import background from "../assets/bull-back.png"
 
 type ActiveTabType = "" | "pools" | "risk" | "vesdl" | "farm"
 
@@ -77,7 +78,11 @@ function TopMenu(): ReactElement {
   }, [theme.palette.background.default])
 
   return (
-    <AppBar position="static" elevation={0} sx={{ border: "none" }}>
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{ border: "none", backgroundImage: `url(${background})` }}
+    >
       <Toolbar
         data-testid="topMenuContainer"
         sx={{

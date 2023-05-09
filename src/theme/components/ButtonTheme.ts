@@ -41,7 +41,7 @@ const outlinedStyle = (
       variant: "outlined",
     },
     style: {
-      border: `1px solid`,
+      border: `2px solid`,
       borderColor: theme.palette[color].light,
       color: theme.palette.getContrastText(theme.palette.background.paper),
       "&:hover": {
@@ -80,7 +80,7 @@ export default function ButtonTheme(theme: Theme): Components {
       styleOverrides: {
         root: {
           textTransform: "none",
-          borderRadius: theme.spacing(1),
+          borderRadius: 0,
         },
         contained: {
           boxShadow: "none",
@@ -98,7 +98,7 @@ export default function ButtonTheme(theme: Theme): Components {
         sizeSmall: {
           minWidth: 0,
           padding: 1,
-          borderRadius: 3,
+          borderRadius: 0,
         },
       },
     },

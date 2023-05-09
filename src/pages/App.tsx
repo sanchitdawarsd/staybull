@@ -4,6 +4,7 @@ import { AppDispatch, AppState } from "../state"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import React, { ReactElement, Suspense, useCallback, useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
+import background from "../assets/bull-back.png"
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns"
 import AppContainer from "./AppContainer"
@@ -63,9 +64,15 @@ export default function App(): ReactElement {
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                               <AppContainer>
                                 <TopMenu />
-                                <Suspense fallback={null}>
-                                  <Pages />
-                                </Suspense>
+                                <div
+                                  style={{
+                                    backgroundImage: `url(${background})`,
+                                  }}
+                                >
+                                  <Suspense fallback={null}>
+                                    <Pages />
+                                  </Suspense>
+                                </div>
                                 <Footer />
                                 <WrongNetworkModal />
                                 <ToastContainer
