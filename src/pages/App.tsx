@@ -22,7 +22,6 @@ import { ToastContainer } from "react-toastify"
 import TokensProvider from "../providers/TokensProvider"
 import TopMenu from "../components/TopMenu"
 import UserStateProvider from "../providers/UserStateProvider"
-import Version from "../components/Version"
 import Web3ReactManager from "../components/Web3ReactManager"
 import WrongNetworkModal from "../components/WrongNetworkModal"
 import fetchGasPrices from "../utils/updateGasPrices"
@@ -69,7 +68,6 @@ export default function App(): ReactElement {
                                 </Suspense>
                                 <Footer />
                                 <WrongNetworkModal />
-                                <Version />
                                 <ToastContainer
                                   theme={
                                     theme.palette.mode === "dark"

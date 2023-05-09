@@ -29,14 +29,14 @@ const ThemeSettingsContext = createContext(initialState)
 function ThemeSettingsProvider({
   children,
 }: PropsWithChildren<unknown>): ReactElement {
-  const [mode, setMode] = useState<ThemeMode>("system")
+  const [mode, setMode] = useState<ThemeMode>("dark")
   const prefersDarkMode = (
     useMediaQuery("(prefers-color-scheme: dark)") ? "dark" : "light"
   ) as ThemeMode
 
   useEffect(() => {
     const initialMode: ThemeMode = (localStorage.getItem("paletteMode") ||
-      "system") as ThemeMode
+      "dark") as ThemeMode
     setMode(initialMode === "system" ? prefersDarkMode : initialMode)
   }, [setMode, prefersDarkMode])
 

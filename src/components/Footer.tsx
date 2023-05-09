@@ -4,6 +4,9 @@ import Box from "@mui/material/Box"
 import Meme1 from "../assets/meme1.png"
 import Meme2 from "../assets/meme2.png"
 import BullLogo from "../assets/bull-logo.png"
+import { ReactComponent as Discord } from "../assets/discord.svg"
+import { ReactComponent as Telegram } from "../assets/telegram.svg"
+import { ReactComponent as Twitter } from "../assets/twitter.svg"
 
 import { Typography } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
@@ -12,7 +15,13 @@ export default function Footer() {
   const theme = useTheme()
 
   return (
-    <Box sx={{ width: "100%", backgroundColor: "#000702" }}>
+    <Box
+      sx={{
+        width: "100%",
+        backgroundColor: "#000702",
+        marginTop: "auto",
+      }}
+    >
       <Grid
         container
         direction="row"
@@ -20,10 +29,20 @@ export default function Footer() {
         alignItems="flex-end"
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
       >
-        <Grid item xs={4} container justifyContent="center" alignItems="center">
+        <Grid item xs={4} container justifyContent="center">
           <img src={Meme1}></img>
         </Grid>
-        <Grid item xs={4} container direction="column" justifyContent="center">
+        <Grid
+          item
+          container
+          xs={4}
+          pt={10}
+          pb={5}
+          direction="column"
+          rowSpacing={3}
+          alignItems="center"
+          justifyContent="center"
+        >
           <Typography
             sx={{
               fontFamily: "BAHIANA",
@@ -46,8 +65,19 @@ export default function Footer() {
           >
             Join Our Community
           </Typography>
+          <Grid item container spacing={3} justifyContent="center">
+            <Grid item>
+              <Discord />
+            </Grid>
+            <Grid item>
+              <Telegram />
+            </Grid>
+            <Grid item>
+              <Twitter />
+            </Grid>
+          </Grid>
           <Grid item justifyContent="center">
-            <img src={BullLogo} width="40%" />
+            <img src={BullLogo} />
           </Grid>
         </Grid>
         <Grid item xs={4} container justifyContent="center">
