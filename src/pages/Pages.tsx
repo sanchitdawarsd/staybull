@@ -20,7 +20,6 @@ const Swap = lazy(() =>
 const VeSDL = lazy(() =>
   import("./VeSDL").then(({ VeSDL }) => ({ default: VeSDL })),
 )
-
 const Options = lazy(() =>
   import("./Options").then(({ Options }) => ({ default: Options })),
 )

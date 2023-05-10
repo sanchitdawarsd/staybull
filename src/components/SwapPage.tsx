@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Collapse,
-  Container,
   IconButton,
   Link,
   Paper,
@@ -38,6 +37,7 @@ import { shortenAddress } from "../utils/shortenAddress"
 import { useActiveWeb3React } from "../hooks"
 import { useSelector } from "react-redux"
 import { useTranslation } from "react-i18next"
+import Grid from "@mui/material/Grid"
 
 interface Props {
   tokenOptions: {
@@ -181,257 +181,299 @@ const SwapPage = (props: Props): ReactElement => {
   )
 
   return (
-    <Container maxWidth="sm" sx={{ pt: 5, pb: 20 }}>
-      <Paper style={{ borderRadius: 28 }}>
-        <Box p={{ xs: 3, md: 4 }} flex={1}>
-          <Box>
-            <Box display="flex">
-              <Typography variant="subtitle1" component="span">
-                {t("from").toLocaleUpperCase()}
-              </Typography>
-              <Box width="max-content" mr={0} ml="auto">
-                <Typography variant="subtitle2" component="span">
-                  {t("balance")}:
+    <Grid
+      container
+      direction="row"
+      justifyContent="center"
+      columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+      sx={{ marginY: "30px" }}
+    >
+      <Grid
+        item
+        xs={4}
+        pt={2}
+        pb={5}
+        direction="column"
+        spacing={2}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography
+          sx={{
+            fontFamily: "BAHIANA",
+            fontSize: "120px",
+            textAlign: "center",
+          }}
+        >
+          SWAP PAGE
+        </Typography>
+        <Typography
+          width="50%"
+          sx={{
+            fontFamily: "POPPINS",
+            fontSize: "16px",
+            color: "#FFFFFFB2",
+            margin: "auto",
+          }}
+        >
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,
+          purus sit amet luctus venenatis, lectus magna fringilla urna,
+          porttitor
+        </Typography>
+      </Grid>
+      <Grid item xs={4}>
+        <Paper style={{ borderRadius: 0 }}>
+          <Box p={{ xs: 3, md: 4 }} flex={1}>
+            <Box>
+              <Box display="flex">
+                <Typography variant="subtitle1" component="span">
+                  {t("from").toLocaleUpperCase()}
                 </Typography>
-                &nbsp;
-                <Button
-                  size="small"
-                  color="secondary"
-                  data-testid="swapTokenFromWalletBalance"
-                  onClick={() => {
-                    if (fromToken == null) return
-                    const amtStr = formatBNToString(
-                      fromToken.amount,
-                      fromToken.decimals || 0,
-                    )
-                    onChangeFromAmount(amtStr)
-                  }}
-                >
-                  {formattedBalance}
-                </Button>
+                <Box width="max-content" mr={0} ml="auto">
+                  <Typography variant="subtitle2" component="span">
+                    {t("balance")}:
+                  </Typography>
+                  &nbsp;
+                  <Button
+                    size="small"
+                    color="secondary"
+                    data-testid="swapTokenFromWalletBalance"
+                    onClick={() => {
+                      if (fromToken == null) return
+                      const amtStr = formatBNToString(
+                        fromToken.amount,
+                        fromToken.decimals || 0,
+                      )
+                      onChangeFromAmount(amtStr)
+                    }}
+                  >
+                    {formattedBalance}
+                  </Button>
+                </Box>
               </Box>
+
+              <SwapTokenInput
+                data-testid="swapTokenInputFrom"
+                tokens={tokenOptions.from.filter(
+                  ({ address }) => address !== toState.address,
+                )}
+                onSelect={onChangeFromToken}
+                onChangeAmount={onChangeFromAmount}
+                selected={fromState.symbol}
+                inputValue={fromState.value}
+                inputValueUSD={fromState.valueUSD}
+                isSwapFrom={true}
+              />
             </Box>
+            <Box display="flex" mt="20px">
+              <IconButton
+                onClick={onClickReverseExchangeDirection}
+                sx={{ mx: "auto" }}
+              >
+                <SwapIcon />
+              </IconButton>
+            </Box>
+            {chainId &&
+              [ChainId.MAINNET, ChainId.POLYGON].includes(chainId) &&
+              renderTokenListsWarning(openFrom, setOpenFrom, "from")}
+            <Typography variant="subtitle1">
+              {t("to").toLocaleUpperCase()}
+            </Typography>
 
             <SwapTokenInput
-              data-testid="swapTokenInputFrom"
-              tokens={tokenOptions.from.filter(
-                ({ address }) => address !== toState.address,
+              data-testid="swapTokenInputTo"
+              tokens={tokenOptions.to.filter(
+                ({ address }) => address !== fromState.address,
               )}
-              onSelect={onChangeFromToken}
-              onChangeAmount={onChangeFromAmount}
-              selected={fromState.symbol}
-              inputValue={fromState.value}
-              inputValueUSD={fromState.valueUSD}
-              isSwapFrom={true}
+              onSelect={onChangeToToken}
+              selected={toState.symbol}
+              inputValue={toState.value}
+              inputValueUSD={toState.valueUSD}
+              isSwapFrom={false}
             />
-          </Box>
-          <Box display="flex" mt="20px">
-            <IconButton
-              onClick={onClickReverseExchangeDirection}
-              sx={{ mx: "auto" }}
-            >
-              <SwapIcon />
-            </IconButton>
-          </Box>
-          {chainId &&
-            [ChainId.MAINNET, ChainId.POLYGON].includes(chainId) &&
-            renderTokenListsWarning(openFrom, setOpenFrom, "from")}
-          <Typography variant="subtitle1">
-            {t("to").toLocaleUpperCase()}
-          </Typography>
+            {chainId &&
+              [ChainId.MAINNET, ChainId.POLYGON].includes(chainId) &&
+              renderTokenListsWarning(openTo, setOpenTo, "to")}
+            <div style={{ height: "24px" }}></div>
 
-          <SwapTokenInput
-            data-testid="swapTokenInputTo"
-            tokens={tokenOptions.to.filter(
-              ({ address }) => address !== fromState.address,
+            {fromState.symbol && toState.symbol && (
+              <Box display="flex" justifyContent="space-between">
+                <div>
+                  <Typography component="span" mr={1}>
+                    {t("rate")}
+                  </Typography>
+                  <Typography component="span" mr={1}>
+                    {exchangeRateInfo.pair}
+                  </Typography>
+                </div>
+                <Typography data-testid="exchRate">
+                  {formattedExchangeRate}
+                </Typography>
+              </Box>
             )}
-            onSelect={onChangeToToken}
-            selected={toState.symbol}
-            inputValue={toState.value}
-            inputValueUSD={toState.valueUSD}
-            isSwapFrom={false}
-          />
-          {chainId &&
-            [ChainId.MAINNET, ChainId.POLYGON].includes(chainId) &&
-            renderTokenListsWarning(openTo, setOpenTo, "to")}
-          <div style={{ height: "24px" }}></div>
-
-          {fromState.symbol && toState.symbol && (
             <Box display="flex" justifyContent="space-between">
-              <div>
-                <Typography component="span" mr={1}>
-                  {t("rate")}
-                </Typography>
-                <Typography component="span" mr={1}>
-                  {exchangeRateInfo.pair}
-                </Typography>
-              </div>
-              <Typography data-testid="exchRate">
-                {formattedExchangeRate}
+              <Typography>{t("priceImpact")}</Typography>
+              <Typography data-testid="swapPriceImpactValue">
+                {formattedPriceImpact}
               </Typography>
             </Box>
-          )}
-          <Box display="flex" justifyContent="space-between">
-            <Typography>{t("priceImpact")}</Typography>
-            <Typography data-testid="swapPriceImpactValue">
-              {formattedPriceImpact}
-            </Typography>
+            {formattedRoute && (
+              <>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography>{t("route")}</Typography>
+                  <Typography>{formattedRoute}</Typography>
+                </Box>
+                {isVirtualSwap && (
+                  <Link
+                    href="https://docs.saddle.finance/saddle-faq#what-is-virtual-swap"
+                    style={{ textDecoration: "underline" }}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    ({t("virtualSwap")})
+                  </Link>
+                )}
+                {isVirtualSwap && isHighSlippage && (
+                  <Alert variant="filled" severity="error" sx={{ mt: 2 }}>
+                    {t("lowSlippageVirtualSwapWarning")}
+                  </Alert>
+                )}
+              </>
+            )}
           </Box>
-          {formattedRoute && (
-            <>
-              <Box display="flex" justifyContent="space-between">
-                <Typography>{t("route")}</Typography>
-                <Typography>{formattedRoute}</Typography>
-              </Box>
-              {isVirtualSwap && (
+        </Paper>
+        {account && isHighPriceImpact(exchangeRateInfo.priceImpact) ? (
+          <Alert variant="filled" severity="error" sx={{ mt: 2 }}>
+            {t("highPriceImpact", {
+              rate: formattedPriceImpact,
+            })}
+          </Alert>
+        ) : null}
+        {isVirtualSwap && (
+          <Alert icon={false} sx={{ mt: 2 }}>
+            <Box display="flex" alignItems="center" mx={5}>
+              <InfoIcon color="primary" />
+              <Typography ml={1}>
+                {t("crossAssetSwapsUseVirtualSwaps")}
                 <Link
                   href="https://docs.saddle.finance/saddle-faq#what-is-virtual-swap"
-                  style={{ textDecoration: "underline" }}
                   target="_blank"
                   rel="noreferrer"
+                  color="inherit"
                 >
-                  ({t("virtualSwap")})
+                  {"<" + t("learnMore") + ">"}
                 </Link>
-              )}
-              {isVirtualSwap && isHighSlippage && (
-                <Alert variant="filled" severity="error" sx={{ mt: 2 }}>
-                  {t("lowSlippageVirtualSwapWarning")}
-                </Alert>
-              )}
-            </>
-          )}
-        </Box>
-      </Paper>
-      {account && isHighPriceImpact(exchangeRateInfo.priceImpact) ? (
-        <Alert variant="filled" severity="error" sx={{ mt: 2 }}>
-          {t("highPriceImpact", {
-            rate: formattedPriceImpact,
-          })}
-        </Alert>
-      ) : null}
-      {isVirtualSwap && (
-        <Alert icon={false} sx={{ mt: 2 }}>
-          <Box display="flex" alignItems="center" mx={5}>
-            <InfoIcon color="primary" />
-            <Typography ml={1}>
-              {t("crossAssetSwapsUseVirtualSwaps")}
-              <Link
-                href="https://docs.saddle.finance/saddle-faq#what-is-virtual-swap"
-                target="_blank"
-                rel="noreferrer"
-                color="inherit"
+              </Typography>
+            </Box>
+          </Alert>
+        )}
+        <div>
+          {pendingSwaps.map((pendingSwap) => {
+            if (!pendingSwap.synthTokenFrom || !pendingSwap.tokenTo)
+              return <>Loading Tokens2</>
+            const formattedSynthBalance = commify(
+              formatUnits(
+                pendingSwap.synthBalance,
+                pendingSwap.synthTokenFrom.decimals,
+              ),
+            )
+            return (
+              <Button
+                key={pendingSwap.itemId?.toString()}
+                variant="outlined"
+                fullWidth
+                size="large"
+                onClick={() => {
+                  setActivePendingSwap(pendingSwap.itemId)
+                  setCurrentModal("pendingSwap")
+                }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  p: 2,
+                  mt: 2,
+                }}
               >
-                {"<" + t("learnMore") + ">"}
-              </Link>
-            </Typography>
-          </Box>
-        </Alert>
-      )}
-      <div>
-        {pendingSwaps.map((pendingSwap) => {
-          if (!pendingSwap.synthTokenFrom || !pendingSwap.tokenTo)
-            return <>Loading Tokens2</>
-          const formattedSynthBalance = commify(
-            formatUnits(
-              pendingSwap.synthBalance,
-              pendingSwap.synthTokenFrom.decimals,
-            ),
-          )
-          return (
-            <Button
-              key={pendingSwap.itemId?.toString()}
-              variant="outlined"
-              fullWidth
-              size="large"
-              onClick={() => {
-                setActivePendingSwap(pendingSwap.itemId)
-                setCurrentModal("pendingSwap")
+                <Typography variant="subtitle1" color="text.primary">
+                  {formattedSynthBalance} {pendingSwap.synthTokenFrom.symbol}{" "}
+                  {"->"} {pendingSwap.tokenTo.symbol}
+                </Typography>
+
+                <Typography variant="body1" color="text.primary">
+                  {Math.ceil(pendingSwap.secondsRemaining / 60)} min wait
+                </Typography>
+              </Button>
+            )
+          })}
+        </div>
+        <AdvancedOptions />
+
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          onClick={(): void => {
+            setCurrentModal("review")
+          }}
+          // disabled={!!error || +toState.value <= 0}
+          sx={{ mt: 3, color: "#000000", borderRadius: 0 }}
+        >
+          {t("swap")}
+        </Button>
+
+        <Typography
+          display={!error ? "none" : "block"}
+          color="error"
+          textAlign="center"
+        >
+          {error}
+        </Typography>
+        <Dialog
+          open={!!currentModal}
+          onClose={(): void => setCurrentModal(null)}
+          scroll="body"
+          hideClose={currentModal === "confirm"}
+        >
+          {currentModal === "review" ? (
+            <ReviewSwap
+              onClose={(): void => setCurrentModal(null)}
+              onConfirm={() => {
+                setCurrentModal("confirm")
+                logEvent("swap", {
+                  from: fromState.symbol,
+                  to: toState.symbol,
+                })
+                void onConfirmTransaction?.()
+                setCurrentModal(null)
               }}
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                p: 2,
-                mt: 2,
+              data={{
+                from: fromState,
+                to: toState,
+                exchangeRateInfo,
+                txnGasCost,
+                swapType,
               }}
-            >
-              <Typography variant="subtitle1" color="text.primary">
-                {formattedSynthBalance} {pendingSwap.synthTokenFrom.symbol}{" "}
-                {"->"} {pendingSwap.tokenTo.symbol}
-              </Typography>
-
-              <Typography variant="body1" color="text.primary">
-                {Math.ceil(pendingSwap.secondsRemaining / 60)} min wait
-              </Typography>
-            </Button>
-          )
-        })}
-      </div>
-      <AdvancedOptions />
-
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        fullWidth
-        onClick={(): void => {
-          setCurrentModal("review")
-        }}
-        disabled={!!error || +toState.value <= 0}
-        sx={{ mt: 3 }}
-      >
-        {t("swap")}
-      </Button>
-
-      <Typography
-        display={!error ? "none" : "block"}
-        color="error"
-        textAlign="center"
-      >
-        {error}
-      </Typography>
-      <Dialog
-        open={!!currentModal}
-        onClose={(): void => setCurrentModal(null)}
-        scroll="body"
-        hideClose={currentModal === "confirm"}
-      >
-        {currentModal === "review" ? (
-          <ReviewSwap
-            onClose={(): void => setCurrentModal(null)}
-            onConfirm={() => {
-              setCurrentModal("confirm")
-              logEvent("swap", {
-                from: fromState.symbol,
-                to: toState.symbol,
-              })
-              void onConfirmTransaction?.()
-              setCurrentModal(null)
-            }}
-            data={{
-              from: fromState,
-              to: toState,
-              exchangeRateInfo,
-              txnGasCost,
-              swapType,
-            }}
-          />
-        ) : null}
-        {currentModal === "confirm" ? <ConfirmTransaction /> : null}
-        {currentModal === "pendingSwap" ? (
-          <PendingSwapModal
-            pendingSwap={
-              pendingSwaps.find(
-                (p) => p.itemId === activePendingSwap,
-              ) as PendingSwap
-            }
-            onClose={() => {
-              setCurrentModal(null)
-              setActivePendingSwap(null)
-            }}
-          />
-        ) : null}
-      </Dialog>
-    </Container>
+            />
+          ) : null}
+          {currentModal === "confirm" ? <ConfirmTransaction /> : null}
+          {currentModal === "pendingSwap" ? (
+            <PendingSwapModal
+              pendingSwap={
+                pendingSwaps.find(
+                  (p) => p.itemId === activePendingSwap,
+                ) as PendingSwap
+              }
+              onClose={() => {
+                setCurrentModal(null)
+                setActivePendingSwap(null)
+              }}
+            />
+          ) : null}
+        </Dialog>
+      </Grid>
+      <Grid item xs={4}></Grid>
+    </Grid>
   )
 }
 

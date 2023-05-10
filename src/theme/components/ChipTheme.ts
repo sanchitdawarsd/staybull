@@ -51,30 +51,33 @@ export default function ChipTheme(theme: Theme): Components {
           style: {
             background:
               theme.palette.mode === "dark"
-                ? theme.palette.common.white
-                : theme.palette.common.black,
+                ? theme.palette.primary.main
+                : theme.palette.primary.main,
             color:
               theme.palette.mode === "dark"
-                ? theme.palette.common.black
+                ? theme.palette.common.white
                 : theme.palette.common.white,
+            borderRadius: 0,
           },
         },
       ]),
       styleOverrides: {
         sizeSmall: {
           height: "fit-content",
-          borderRadius: theme.spacing(0.5),
+          borderRadius: 0,
         },
         labelSmall: {
           padding: "0px 2px 0px 2px",
           fontSize: theme.typography.subtitle2.fontSize,
           fontWeight: theme.typography.subtitle2.fontWeight,
+          borderRadius: 0,
         },
         labelMedium: {
           minWidth: 70,
           textAlign: "center",
           fontSize: theme.typography.subtitle1.fontSize,
           fontWeight: theme.typography.subtitle1.fontWeight,
+          borderRadius: 0,
         },
       },
     },

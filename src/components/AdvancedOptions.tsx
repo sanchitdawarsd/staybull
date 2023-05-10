@@ -81,7 +81,17 @@ export default function AdvancedOptions({
       dispatch(updateTransactionDeadlineSelected(deadlineValue))
   }
   return (
-    <Box data-testid="advOptionContainer" mt={3} width="100%">
+    <Box
+      data-testid="advOptionContainer"
+      mt={3}
+      width="100%"
+      sx={{
+        "& .MuiPaper-root": {
+          borderRadius: "0 !important",
+          borderColor: "#ffffff",
+        },
+      }}
+    >
       <Accordion
         data-testid="advOptionTitle"
         onChange={(): PayloadAction<boolean> =>
@@ -90,18 +100,11 @@ export default function AdvancedOptions({
         expanded={advanced}
         sx={{
           padding: 0,
+          borderRadius: "unset",
           border: isOutlined ? "unset" : `1px solid ${theme.palette.divider}`,
           background: isOutlined
             ? "transparent"
             : theme.palette.background.paper,
-          "&:first-of-type": {
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-          },
-          "&:last-of-type": {
-            borderBottomLeftRadius: 16,
-            borderBottomRightRadius: 16,
-          },
           transition: "all 0.5 ease",
         }}
       >

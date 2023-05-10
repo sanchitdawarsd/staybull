@@ -93,7 +93,7 @@ function TokenInput({
       <Box
         id="tokenInput"
         display="flex"
-        borderRadius="6px"
+        borderRadius="0px"
         alignItems="center"
         border={`1px solid ${
           !error ? theme.palette.other.border : theme.palette.error.main

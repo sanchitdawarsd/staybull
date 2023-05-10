@@ -9,8 +9,14 @@ import UsdcLogo from "../../assets/icons/usdc.svg"
 const Options = () => {
   return (
     <Container maxWidth="md" sx={{ pb: 16 }}>
-      <Typography variant="h1" textAlign={"center"}>
-        Options Page
+      <Typography
+        sx={{
+          fontFamily: "BAHIANA",
+          fontSize: "120px",
+          textAlign: "center",
+        }}
+      >
+        OPTIONS PAGE
       </Typography>
       <Typography variant="body1" textAlign={"center"} mt={2} fontSize={14}>
         oBULL gives its holder the right to purchase BULL at a discount price.
@@ -18,7 +24,6 @@ const Options = () => {
       </Typography>
 
       <Box
-        width={700}
         p={3}
         sx={{
           border: "solid 2px #00ef80",
@@ -27,13 +32,13 @@ const Options = () => {
         }}
       >
         <Typography variant="body1" mt={1} fontSize={12}>
-          Strike price: $0.03365 LIT price: $0.07078 Discount: 52.46%
+          Strike price: $0.03365 $oBULL Price: $0.07078 $BULL Discount: 52.46%
         </Typography>
         <div style={{ margin: "auto", textAlign: "center" }}>
-          <InputField balance={0} value={0} name={"oBull"} logoUrl={OBULLogo} />
-          <InputField balance={0} value={0} name={"USDC"} logoUrl={UsdcLogo} />
+          <InputField balance={0} name={"oBull"} logoUrl={OBULLogo} />
+          <InputField balance={0} name={"USDC"} logoUrl={UsdcLogo} />
           <ArrowDownwardIcon sx={{ marginTop: 2 }} />
-          <InputField balance={0} value={0} name={"Bull"} logoUrl={BullLogo} />
+          <InputField balance={0} name={"Bull"} logoUrl={BullLogo} />
         </div>
         <Button
           fullWidth

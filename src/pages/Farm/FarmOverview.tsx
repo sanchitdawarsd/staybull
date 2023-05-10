@@ -1,6 +1,7 @@
 import {
   Button,
   Grid,
+  Paper,
   Typography,
   styled,
   useMediaQuery,
@@ -94,101 +95,103 @@ FarmOverviewProps): JSX.Element | null {
   if (isDeadFusdcGauge && amountStakedDeadFusdc.eq(Zero)) return null // don't show old gauge to non-stakers
 
   return (
-    <Grid
-      container
-      alignItems="center"
-      direction="row"
-      sx={{
-        backgroundColor: (theme) =>
-          isDeadFusdcGauge
-            ? theme.palette.action.focus
-            : theme.palette.background.paper,
-        py: 1,
-        px: 3,
-      }}
-    >
-      <Grid item container xs={7} lg={3.5} flexDirection="column" gap={1}>
-        <Typography variant="h2">
-          {isDeadFusdcGauge ? "Outdated " : ""}
-          {farmName}
-        </Typography>
-        <TokenGroup>
-          {farmName === "SDL/WETH SLP" ? (
-            <>
-              <TokenIcon symbol="SDL" alt="sdl" />
-              <TokenIcon symbol="WETH" alt="weth" />
-            </>
-          ) : (
-            poolTokens?.map((tokenAddress) => {
-              const token = tokens?.[tokenAddress]
-              if (!token) return <div></div>
-              return (
-                <TokenIcon
-                  key={token.name}
-                  symbol={token.symbol}
-                  alt={token.symbol}
-                />
-              )
-            })
-          )}
-        </TokenGroup>
+    <Paper style={{ borderRadius: 0 }}>
+      <Grid
+        container
+        alignItems="center"
+        direction="row"
+        sx={{
+          backgroundColor: (theme) =>
+            isDeadFusdcGauge
+              ? theme.palette.action.focus
+              : theme.palette.background.paper,
+          py: 1,
+          px: 3,
+        }}
+      >
+        <Grid item container xs={7} lg={3.5} flexDirection="column" gap={1}>
+          <Typography variant="h2">
+            {isDeadFusdcGauge ? "Outdated " : ""}
+            {farmName}
+          </Typography>
+          <TokenGroup>
+            {farmName === "SDL/WETH SLP" ? (
+              <>
+                <TokenIcon symbol="SDL" alt="sdl" />
+                <TokenIcon symbol="WETH" alt="weth" />
+              </>
+            ) : (
+              poolTokens?.map((tokenAddress) => {
+                const token = tokens?.[tokenAddress]
+                if (!token) return <div></div>
+                return (
+                  <TokenIcon
+                    key={token.name}
+                    symbol={token.symbol}
+                    alt={token.symbol}
+                  />
+                )
+              })
+            )}
+          </TokenGroup>
 
-        {isLgDown && (
+          {isLgDown && (
+            <React.Fragment>
+              <Typography variant="subtitle1">
+                TVL: {tvl ? `${formatBNToShortString(tvl, 18)}` : "_"}
+              </Typography>
+              <Typography variant="subtitle1">
+                {t("myStaked")}:{" "}
+                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
+              </Typography>
+            </React.Fragment>
+          )}
+        </Grid>
+        <Grid item xs={3}>
+          {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />}
+        </Grid>
+        {!isLgDown && (
           <React.Fragment>
-            <Typography variant="subtitle1">
-              TVL: {tvl ? `${formatBNToShortString(tvl, 18)}` : "_"}
-            </Typography>
-            <Typography variant="subtitle1">
-              {t("myStaked")}:{" "}
-              {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
-            </Typography>
+            <Grid item xs={0} lg={1.5}>
+              <Typography variant="subtitle1">
+                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"}
+              </Typography>
+            </Grid>
+            <Grid item xs={1.5}>
+              <Typography variant="subtitle1">
+                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
+              </Typography>
+            </Grid>
           </React.Fragment>
         )}
-      </Grid>
-      <Grid item xs={3}>
-        {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />}
-      </Grid>
-      {!isLgDown && (
-        <React.Fragment>
-          <Grid item xs={0} lg={1.5}>
-            <Typography variant="subtitle1">
-              {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"}
-            </Typography>
-          </Grid>
-          <Grid item xs={1.5}>
-            <Typography variant="subtitle1">
-              {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
-            </Typography>
-          </Grid>
-        </React.Fragment>
-      )}
-      <Grid item xs={12} lg="auto" justifyContent="center">
-        {/* <Button variant="outlined" size="large">
+        <Grid item xs={12} lg="auto" justifyContent="center">
+          {/* <Button variant="outlined" size="large">
           {t("claimRewards")}
         </Button> */}
-        {isDeadFusdcGauge ? (
-          <Button
-            variant="contained"
-            size="large"
-            color="error"
-            onClick={() => void onClickUnstakeOldFusdc()}
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            {t("unstake")}
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            size="large"
-            onClick={onClickStake}
-            fullWidth
-            sx={{ mt: 2 }}
-          >
-            {t("stakeOrUnstake")}
-          </Button>
-        )}
+          {isDeadFusdcGauge ? (
+            <Button
+              variant="contained"
+              size="large"
+              color="error"
+              onClick={() => void onClickUnstakeOldFusdc()}
+              fullWidth
+              sx={{ mt: 1 }}
+            >
+              {t("unstake")}
+            </Button>
+          ) : (
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={onClickStake}
+              fullWidth
+              sx={{ mt: 1 }}
+            >
+              {t("stakeOrUnstake")}
+            </Button>
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </Paper>
   )
 }
