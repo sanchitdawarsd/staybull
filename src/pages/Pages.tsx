@@ -20,6 +20,9 @@ const Swap = lazy(() =>
 const VeSDL = lazy(() =>
   import("./VeSDL").then(({ VeSDL }) => ({ default: VeSDL })),
 )
+const Options = lazy(() =>
+  import("./Options").then(({ Options }) => ({ default: Options })),
+)
 const VestingClaim = lazy(() => import("./VestingClaim"))
 const Withdraw = lazy(() => import("./Withdraw"))
 
@@ -61,6 +64,7 @@ export default function Pages() {
         )}
       </Route>
       <Route exact path="/risk" component={Risk} />
+      <Route exact path="/options" component={Options} />
       <Route exact path="/vesting-claim" component={VestingClaim} />
       <Route exact path="/farm" component={Farm} />
       <Route exact path="/vesdl" component={VeSDL} />

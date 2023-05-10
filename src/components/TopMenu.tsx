@@ -32,7 +32,7 @@ import { useSelector } from "react-redux"
 import { useTranslation } from "react-i18next"
 import background from "../assets/bull-back.png"
 
-type ActiveTabType = "" | "pools" | "risk" | "vesdl" | "farm"
+type ActiveTabType = "" | "pools" | "risk" | "vesdl" | "farm" | "options"
 
 const NavMenu = styled(NavLink)<NavLinkProps & { selected: boolean }>(
   ({ theme, selected }) => {
@@ -240,10 +240,11 @@ function MenuList() {
           {t("Stake")}
         </NavMenu>
       )}
-
-      <NavMenu to="/risk" selected={activeTab === "risk"} sx={{ px: 3 }}>
-        {t("Options")}
-      </NavMenu>
+      {isMainnet(chainId) && (
+        <NavMenu to="/options" selected={activeTab === "options"}>
+          {t("Options")}
+        </NavMenu>
+      )}
     </React.Fragment>
   )
 }
