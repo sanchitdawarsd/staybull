@@ -9,8 +9,14 @@ import UsdcLogo from "../../assets/icons/usdc.svg"
 const Options = () => {
   return (
     <Container maxWidth="md" sx={{ pb: 16 }}>
-      <Typography variant="h1" textAlign={"center"}>
-        Options Page
+      <Typography
+        sx={{
+          fontFamily: "BAHIANA",
+          fontSize: "120px",
+          textAlign: "center",
+        }}
+      >
+        OPTIONS PAGE
       </Typography>
       <Typography variant="body1" textAlign={"center"} mt={2} fontSize={14}>
         oBULL gives its holder the right to purchase BULL at a discount price.
