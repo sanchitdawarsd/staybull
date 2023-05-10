@@ -33,7 +33,7 @@ const Options = () => {
         }}
       >
         <Typography variant="body1" mt={1} fontSize={12}>
-          Strike price: $0.03365 LIT price: $0.07078 Discount: 52.46%
+          Strike price: $0.03365 $oBULL Price: $0.07078 $BULL Discount: 52.46%
         </Typography>
         <div style={{ margin: "auto", textAlign: "center" }}>
           <InputField balance={0} value={0} name={"oBull"} logoUrl={OBULLogo} />

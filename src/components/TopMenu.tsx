@@ -235,11 +235,11 @@ function MenuList() {
         </NavMenu>
       )}
 
-      {isMainnet(chainId) && (
+      {/* {isMainnet(chainId) && (
         <NavMenu to="/vesdl" selected={activeTab === "vesdl"} sx={{ px: 3 }}>
           {t("Stake")}
         </NavMenu>
-      )}
+      )} */}
       {isMainnet(chainId) && (
         <NavMenu to="/options" selected={activeTab === "options"}>
           {t("Options")}
