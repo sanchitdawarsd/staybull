@@ -1,15 +1,17 @@
 import React, { PropsWithChildren } from "react"
-import DevTool from "../components/DevTool/DevTool"
+// import DevTool from "../components/DevTool/DevTool"
 import { styled } from "@mui/material"
 
-const AppWrapper = styled("div")(({ theme }) => {
-  const darkBackground = "/static/images/dark-bg.svg"
-  const lightBackground = "/static/images/light-bg.svg"
+const AppWrapper = styled("div")(() => {
+  // const darkBackground = "/static/images/dark-bg.svg"
+  // const lightBackground = "/static/images/light-bg.svg"
   return {
-    background:
-      theme.palette.mode === "light"
-        ? `url(${lightBackground})`
-        : `url(${darkBackground})`,
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: "#050c04",
+    // theme.palette.mode === "light"
+    //   ? `url(${lightBackground})`
+    //   : `url(${darkBackground})`,
     minHeight: "100vh",
     minWidth: "100vw",
     marginRight: "calc(-1 * (100vw - 100%))",
@@ -22,10 +24,5 @@ const AppWrapper = styled("div")(({ theme }) => {
 })
 
 export default function AppContainer({ children }: PropsWithChildren<unknown>) {
-  return (
-    <AppWrapper>
-      {children}
-      <DevTool />
-    </AppWrapper>
-  )
+  return <AppWrapper>{children}</AppWrapper>
 }

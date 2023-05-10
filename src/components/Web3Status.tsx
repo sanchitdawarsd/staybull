@@ -34,11 +34,16 @@ const Web3Status = (): ReactElement => {
   return (
     <div data-testid="walletStatusContainer">
       <Button
-        variant={account ? "contained" : "outlined"}
-        color="secondary"
         onClick={(): void => setModalOpen(true)}
         data-testid="accountDetailButton"
-        endIcon={account && <Identicon />}
+        startIcon={account && <Identicon />}
+        sx={{
+          py: 3,
+          borderRadius: 0,
+          color: "#000000",
+          backgroundColor: "#ffffff",
+          paddingX: "30px",
+        }}
       >
         <Typography variant="body1" whiteSpace="nowrap">
           {account

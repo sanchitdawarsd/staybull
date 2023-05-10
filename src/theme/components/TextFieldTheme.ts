@@ -5,7 +5,7 @@ export default function TextFieldTheme(): Components {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
+          borderRadius: 0,
           paddingRight: 8,
           "& fieldset": {
             borderColor: "#474799",

@@ -57,7 +57,7 @@ const lightPalette: PaletteOptions | undefined = {
   },
   secondary: {
     main: "#47998F",
-    dark: "#337F77",
+    dark: "#009c19",
     light: "#78C4BB",
   },
   info: {
@@ -76,8 +76,8 @@ const lightPalette: PaletteOptions | undefined = {
     disabled: "#A7A7A7",
   },
   success: {
-    main: "#06D7D7",
-    dark: "#037777",
+    main: "#009c19",
+    dark: "#009c19",
     light: "#83EBEB",
     alert: {
       background: "#E6FFFF",
@@ -122,13 +122,13 @@ const lightPalette: PaletteOptions | undefined = {
 const darkPalette: PaletteOptions | undefined = {
   mode: "dark",
   primary: {
-    main: "#474799",
+    main: "#009c19",
     dark: "#363681",
-    light: "#7272BA",
+    light: "#009c19",
   },
   secondary: {
-    main: "#47998F",
-    dark: "#337F77",
+    main: "#009c19",
+    dark: "#009c19",
     light: "#78C4BB",
   },
   info: {
@@ -139,16 +139,16 @@ const darkPalette: PaletteOptions | undefined = {
 
   action: {
     hover: "rgba(0, 0, 0, 0.2)",
-    active: "#474799",
+    active: "#009c19",
     disabled: "#A7A7A7",
     disabledBackground: "#404040",
     hoverOpacity: 0.5,
-    selected: "#474799",
+    selected: "#009c19",
   },
   success: {
     main: "#06D7D7",
-    dark: "#037777",
-    light: "#83EBEB",
+    dark: "#009c19",
+    light: "#009c19",
     alert: {
       background: "#E6FFFF",
     },
@@ -182,12 +182,12 @@ const darkPalette: PaletteOptions | undefined = {
   divider: "#7272BA",
   other: {
     divider: "#7272BA",
-    border: "#474799",
+    border: "#FFFFFF",
   },
   grey: GREY_TONES,
   gradient: {
-    primary: createGradient2("#7272BA", "#474799"),
-    secondary: createGradient2("#78C4BB", "#47998F"),
+    primary: "linear-gradient(180deg, #00FF94 17.2%, #019C1A 85.25%)",
+    secondary: "linear-gradient(151.49deg, #00FF94 17.2%, #019C1A 85.25%) 10",
     logo: "linear-gradient(90deg, #78C4BB 0%, #4F9994 22%, #363681 86%)",
     gold: "linear-gradient(90deg, #CEAA7B 0%, #FCF5DD 50%, #BE893D 100%)",
   },

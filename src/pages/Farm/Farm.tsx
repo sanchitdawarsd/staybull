@@ -4,6 +4,8 @@ import {
   Container,
   Divider,
   Grid,
+  Paper,
+  Stack,
   Typography,
   useMediaQuery,
   useTheme,
@@ -22,7 +24,7 @@ import VeSDLWrongNetworkModal from "../VeSDL/VeSDLWrongNetworkModal"
 import { Zero } from "@ethersproject/constants"
 import { formatUnits } from "ethers/lib/utils"
 import useGaugeTVL from "../../hooks/useGaugeTVL"
-import { useTranslation } from "react-i18next"
+// import { useTranslation } from "react-i18next"
 
 type ActiveGauge = {
   address: string
@@ -117,27 +119,56 @@ export default function Farm(): JSX.Element {
 
   return (
     <Container sx={{ pt: 5, pb: 5 }}>
+      <Stack alignItems="flex-start">
+        <div>
+          <Typography
+            sx={{
+              fontFamily: "BAHIANA",
+              fontSize: "120px",
+              textAlign: "center",
+            }}
+          >
+            FARM PAGE
+          </Typography>
+        </div>
+        <div>
+          <Typography
+            sx={{
+              fontFamily: "POPPINS",
+              fontSize: "16px",
+              color: "#FFFFFFB2",
+            }}
+          >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,
+            purus sit amet luctus venenatis, lectus magna fringilla urna,
+            porttitor
+          </Typography>
+        </div>
+      </Stack>
+
       <Box
         position="sticky"
         top={0}
-        bgcolor={(theme) => theme.palette.background.paper}
+        bgcolor="#191919"
+        // bgcolor={(theme) => theme.palette.background.paper}
+        my={2}
         zIndex={(theme) => theme.zIndex.mobileStepper - 1}
-        py={2}
-        sx={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+        sx={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
       >
-        <FarmListHeader />
+        <Paper style={{ borderRadius: 0 }}>
+          <FarmListHeader />
+        </Paper>
       </Box>
 
       <Box
-        bgcolor={(theme) => theme.palette.background.paper}
+        // bgcolor={(theme) => theme.palette.background.paper}
         zIndex={(theme) => theme.zIndex.mobileStepper - 1}
-        py={2}
-        sx={{ borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}
+        sx={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
       >
         {farmData.map(
           ({ gaugeAddress, farmName, aprs, poolTokens, tvl, myStake }) => {
             return (
-              <Box key={gaugeAddress}>
+              <Box key={gaugeAddress} my={2}>
                 <Divider />
                 <FarmOverview
                   gaugeAddress={gaugeAddress}
@@ -194,7 +225,7 @@ export default function Farm(): JSX.Element {
 }
 
 function FarmListHeader(): JSX.Element {
-  const { t } = useTranslation()
+  // const { t } = useTranslation()
   const theme = useTheme()
   const isLgDown = useMediaQuery(theme.breakpoints.down("lg"))
   return (
@@ -202,24 +233,24 @@ function FarmListHeader(): JSX.Element {
       container
       direction="row"
       sx={{
-        py: 1,
+        py: 3,
         px: 3,
       }}
     >
       <Grid item xs={7} lg={3.5}>
-        <Typography>{t("farms")}</Typography>
+        <Typography>FARMS</Typography>
       </Grid>
       <Grid item xs={3}>
         <Typography>APR</Typography>
       </Grid>
       {!isLgDown && (
         <Grid item xs={1.5}>
-          <Typography>Gauge TVL</Typography>
+          <Typography>GAUGE TVL</Typography>
         </Grid>
       )}
       {!isLgDown && (
         <Grid item xs={1.5}>
-          <Typography>{t("myStaked")} LP</Typography>
+          <Typography>MY STAKED LP</Typography>
         </Grid>
       )}
     </Grid>

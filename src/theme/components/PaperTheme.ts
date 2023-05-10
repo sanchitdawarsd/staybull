@@ -7,9 +7,11 @@ export default function PaperTheme(theme: Theme): Components {
         root: {
           backgroundColor: theme.palette.background.paper,
           backgroundImage: "none",
-          border: `1px solid ${theme.palette.primary.light}`,
+          borderImage: `${theme.palette.gradient?.secondary || "black"}`,
+          borderStyle: "solid",
+          borderWidth: "3px",
           boxShadow: "none",
-          borderRadius: theme.spacing(1),
+          borderRadius: 0,
           opacity: 1,
         },
       },

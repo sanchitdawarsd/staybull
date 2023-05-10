@@ -105,8 +105,8 @@ export default function SwapTokenInput({
         display="flex"
         alignItems="center"
         padding={1}
-        borderRadius="6px"
-        border={`1px solid ${theme.palette.other.border} `}
+        borderRadius="0px"
+        border={`3px solid ${theme.palette.other.border} `}
         bgcolor={theme.palette.background.paper}
         ref={containerRef}
       >
@@ -122,12 +122,13 @@ export default function SwapTokenInput({
         )}
         <Box flexWrap="nowrap">
           <Button
-            variant="contained"
+            variant="outlined"
             onClick={handleClick}
             endIcon={<ArrowDropDown />}
             data-testid="listOpenBtn"
+            sx={{ border: "none" }}
           >
-            <Typography variant="subtitle1" color="secondary.light">
+            <Typography variant="subtitle1" color="#ffffff">
               {selectedTokenSymbol || "Choose"}
             </Typography>
           </Button>
@@ -159,7 +160,7 @@ export default function SwapTokenInput({
           <Typography
             data-testid="inputValueUSD"
             variant="body2"
-            color="secondary"
+            color="primary"
             textAlign="end"
           >
             ≈$

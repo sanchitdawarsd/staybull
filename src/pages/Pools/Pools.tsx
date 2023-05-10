@@ -8,6 +8,7 @@ import {
   FormGroup,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material"
 import React, { ReactElement, useContext, useEffect, useState } from "react"
 
@@ -75,6 +76,32 @@ function Pools(): ReactElement | null {
 
   return (
     <Container sx={{ pb: 5 }}>
+      <Stack alignItems="flex-start">
+        <div>
+          <Typography
+            sx={{
+              fontFamily: "BAHIANA",
+              fontSize: "120px",
+              textAlign: "center",
+            }}
+          >
+            POOL PAGE
+          </Typography>
+        </div>
+        <div>
+          <Typography
+            sx={{
+              fontFamily: "POPPINS",
+              fontSize: "16px",
+              color: "#FFFFFFB2",
+            }}
+          >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,
+            purus sit amet luctus venenatis, lectus magna fringilla urna,
+            porttitor
+          </Typography>
+        </div>
+      </Stack>
       <Stack direction="row" alignItems="center" justifyContent="center">
         {communityPoolsEnabled(chainId) && (
           <Box flex={1}>
@@ -133,7 +160,12 @@ function Pools(): ReactElement | null {
             <Button
               variant="outlined"
               color="secondary"
-              sx={{ float: "right" }}
+              sx={{
+                float: "right",
+                borderRadius: 0,
+                paddingX: "60px",
+                paddingY: "30px",
+              }}
               // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
               onClick={() => history.push("/pools/create")}
             >
@@ -143,7 +175,7 @@ function Pools(): ReactElement | null {
         )}
       </Stack>
 
-      <Stack spacing={3}>
+      <Stack spacing={3} sx={{ marginY: "20px" }}>
         {Object.values(pools || {})
           .filter(
             (pool) =>
