@@ -32,7 +32,7 @@ import getSnapshotVoteData from "../utils/getSnapshotVoteData"
 import { useActiveWeb3React } from "../hooks"
 import usePoller from "../hooks/usePoller"
 import { useSdlWethSushiPairContract } from "../hooks/useContract"
-import { useTheme } from "@mui/material"
+import { Box, useTheme } from "@mui/material"
 import Footer from "../components/Footer"
 
 const queryClient = new QueryClient({
@@ -64,15 +64,18 @@ export default function App(): ReactElement {
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                               <AppContainer>
                                 <TopMenu />
-                                <div
-                                  style={{
-                                    backgroundImage: `url(${background})`,
+                                <Box
+                                  sx={{
+                                    backgroundImage: {
+                                      xs: "",
+                                      lg: `url(${background})`,
+                                    },
                                   }}
                                 >
                                   <Suspense fallback={null}>
                                     <Pages />
                                   </Suspense>
-                                </div>
+                                </Box>
                                 <Footer />
                                 <WrongNetworkModal />
                                 <ToastContainer

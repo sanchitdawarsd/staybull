@@ -6,6 +6,7 @@ import {
   Container,
   FormControlLabel,
   FormGroup,
+  Grid,
   Stack,
   TextField,
   Typography,
@@ -76,7 +77,7 @@ function Pools(): ReactElement | null {
 
   return (
     <Container sx={{ pb: 5 }}>
-      <Stack alignItems="flex-start">
+      <Stack alignItems="flex-start" sx={{ marginBottom: "20px" }}>
         <div>
           <Typography
             sx={{
@@ -102,7 +103,11 @@ function Pools(): ReactElement | null {
           </Typography>
         </div>
       </Stack>
-      <Stack direction="row" alignItems="center" justifyContent="center">
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        alignItems={{ xs: "start", md: "center" }}
+        justifyContent="center"
+      >
         {communityPoolsEnabled(chainId) && (
           <Box flex={1}>
             <TextField
@@ -134,33 +139,41 @@ function Pools(): ReactElement | null {
             )}
           </Box>
         )}
-        <Stack direction="row" spacing={1} my={3}>
-          {[
-            ["all", "ALL"] as const,
-            [PoolTypes.BTC, "BTC"] as const,
-            [PoolTypes.ETH, "ETH"] as const,
-            [PoolTypes.USD, "USD"] as const,
-            ["outdated", "OUTDATED"] as const,
-          ].map(([filterKey, text]) => (
-            <Chip
-              key={filterKey}
-              variant={filter === filterKey ? "filled" : "text"}
-              size="medium"
-              color={filterKey === "outdated" ? "warning" : "default"}
-              label={text}
-              onClick={(): void => setFilter(filterKey)}
-            />
-          ))}
-        </Stack>
+        <Box flex={2} width="100%">
+          <Grid container direction="row" spacing={1} my={3} ml="0px">
+            {[
+              ["all", "ALL"] as const,
+              [PoolTypes.BTC, "BTC"] as const,
+              [PoolTypes.ETH, "ETH"] as const,
+              [PoolTypes.USD, "USD"] as const,
+              ["outdated", "OUTDATED"] as const,
+            ].map(([filterKey, text], index) => (
+              <Grid key={filterKey} xs={index === 4 ? 4 : 2}>
+                <Chip
+                  variant={filter === filterKey ? "filled" : "text"}
+                  size="medium"
+                  color={filterKey === "outdated" ? "warning" : "default"}
+                  label={text}
+                  onClick={(): void => setFilter(filterKey)}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
 
         {communityPoolsEnabled(
           chainId,
         ) /* TODO: Change when perm pool turned on */ && (
-          <Box flex={1}>
+          <Box
+            flex={1}
+            sx={{ display: "flex", alignItems: "start" }}
+            width="100%"
+          >
             <Button
               variant="outlined"
               color="secondary"
               sx={{
+                width: "100%",
                 float: "right",
                 borderRadius: 0,
                 paddingX: "60px",

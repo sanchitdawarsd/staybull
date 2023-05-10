@@ -116,7 +116,7 @@ export default function PoolOverview({
       data-testid="poolOverview"
     >
       <Grid container alignItems="center" spacing={2}>
-        <Grid item xs={12} lg={2}>
+        <Grid item xs={6} lg={2}>
           <Box>
             <Box
               display="flex"
@@ -153,8 +153,8 @@ export default function PoolOverview({
             )}
           </Box>
         </Grid>
-        <Grid item xs={12} lg={1.5}>
-          <Stack spacing={1} direction={{ xs: "row", lg: "column" }}>
+        <Grid item xs={6} lg={1.5}>
+          <Stack spacing={1} direction={{ xs: "column", lg: "column" }}>
             {poolData.tokens.length > 0 ? (
               poolData.tokens.map(({ symbol, isOnTokenLists }) => (
                 <Box display="flex" alignItems="center" key={symbol}>
@@ -239,7 +239,7 @@ export default function PoolOverview({
           )}
         </StyledGrid>
         <Grid item xs={12} lg={4}>
-          <Stack direction="row" spacing={2}>
+          <Stack direction={{ xs: "column", lg: "row" }} spacing={2}>
             {shouldMigrate ? (
               <Button
                 variant="contained"
