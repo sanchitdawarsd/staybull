@@ -29,13 +29,21 @@ export default function Footer() {
         alignItems="flex-end"
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
       >
-        <Grid item xs={4} container justifyContent="center">
+        <Grid
+          item
+          xs={2}
+          lg={4}
+          container
+          justifyContent="center"
+          sx={{ display: { xs: "none", lg: "block" } }}
+        >
           <img src={Meme1}></img>
         </Grid>
         <Grid
           item
           container
-          xs={4}
+          xs={8}
+          lg={4}
           pt={10}
           pb={5}
           direction="column"
@@ -80,7 +88,14 @@ export default function Footer() {
             <img src={BullLogo} />
           </Grid>
         </Grid>
-        <Grid item xs={4} container justifyContent="center">
+        <Grid
+          item
+          xs={2}
+          lg={4}
+          container
+          justifyContent="center"
+          sx={{ display: { xs: "none", lg: "block" } }}
+        >
           <img src={Meme2}></img>
         </Grid>
       </Grid>

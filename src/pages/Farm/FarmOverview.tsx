@@ -98,7 +98,7 @@ FarmOverviewProps): JSX.Element | null {
     <Paper style={{ borderRadius: 0 }}>
       <Grid
         container
-        alignItems="center"
+        alignItems={{ xs: "flex-start", lg: "center" }}
         direction="row"
         sx={{
           backgroundColor: (theme) =>
@@ -109,57 +109,68 @@ FarmOverviewProps): JSX.Element | null {
           px: 3,
         }}
       >
-        <Grid item container xs={7} lg={3.5} flexDirection="column" gap={1}>
-          <Typography variant="h2">
-            {isDeadFusdcGauge ? "Outdated " : ""}
-            {farmName}
-          </Typography>
-          <TokenGroup>
-            {farmName === "SDL/WETH SLP" ? (
-              <>
-                <TokenIcon symbol="SDL" alt="sdl" />
-                <TokenIcon symbol="WETH" alt="weth" />
-              </>
-            ) : (
-              poolTokens?.map((tokenAddress) => {
-                const token = tokens?.[tokenAddress]
-                if (!token) return <div></div>
-                return (
-                  <TokenIcon
-                    key={token.name}
-                    symbol={token.symbol}
-                    alt={token.symbol}
-                  />
-                )
-              })
-            )}
-          </TokenGroup>
+        <Grid item container xs={7} lg={3.5} flexDirection="column" gap={2}>
+          <Grid item xs={6} lg={12}>
+            <Typography variant="h4">FARM</Typography>
+            <Typography variant="h2">
+              {isDeadFusdcGauge ? "Outdated " : ""}
+              {farmName}
+            </Typography>
+            <TokenGroup>
+              {farmName === "SDL/WETH SLP" ? (
+                <>
+                  <TokenIcon symbol="SDL" alt="sdl" />
+                  <TokenIcon symbol="WETH" alt="weth" />
+                </>
+              ) : (
+                poolTokens?.map((tokenAddress) => {
+                  const token = tokens?.[tokenAddress]
+                  if (!token) return <div></div>
+                  return (
+                    <TokenIcon
+                      key={token.name}
+                      symbol={token.symbol}
+                      alt={token.symbol}
+                    />
+                  )
+                })
+              )}
+            </TokenGroup>
+          </Grid>
 
           {isLgDown && (
-            <React.Fragment>
+            <Grid item xs={6}>
+              <Typography variant="subtitle1">GAUGE TVL</Typography>
               <Typography variant="subtitle1">
-                TVL: {tvl ? `${formatBNToShortString(tvl, 18)}` : "_"}
+                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"}
               </Typography>
-              <Typography variant="subtitle1">
-                {t("myStaked")}:{" "}
-                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
-              </Typography>
-            </React.Fragment>
+            </Grid>
           )}
         </Grid>
-        <Grid item xs={3}>
-          {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />}
+        <Grid item container xs={5} lg={3} flexDirection="column" gap={2}>
+          <Grid xs={6} lg={12}>
+            {isLgDown && <Typography variant="subtitle1">APR</Typography>}
+            {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />}
+          </Grid>
+          {isLgDown && (
+            <Grid xs={6}>
+              <Typography variant="subtitle1">{t("myStaked")} LP</Typography>
+              <Typography variant="subtitle1">
+                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
+              </Typography>
+            </Grid>
+          )}
         </Grid>
         {!isLgDown && (
           <React.Fragment>
             <Grid item xs={0} lg={1.5}>
               <Typography variant="subtitle1">
-                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"}
+                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "-"}
               </Typography>
             </Grid>
             <Grid item xs={1.5}>
               <Typography variant="subtitle1">
-                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
+                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "-"}
               </Typography>
             </Grid>
           </React.Fragment>

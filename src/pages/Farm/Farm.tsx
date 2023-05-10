@@ -153,7 +153,11 @@ export default function Farm(): JSX.Element {
         // bgcolor={(theme) => theme.palette.background.paper}
         my={2}
         zIndex={(theme) => theme.zIndex.mobileStepper - 1}
-        sx={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+        sx={{
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          display: { xs: "none", lg: "block" },
+        }}
       >
         <Paper style={{ borderRadius: 0 }}>
           <FarmListHeader />

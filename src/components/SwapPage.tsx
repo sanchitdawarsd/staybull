@@ -183,10 +183,10 @@ const SwapPage = (props: Props): ReactElement => {
   return (
     <Grid
       container
-      direction="row"
+      direction={{ xs: "column", lg: "row" }}
       justifyContent="center"
       columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-      sx={{ marginY: "30px" }}
+      sx={{ marginY: "30px", paddingX: "10px" }}
     >
       <Grid
         item
@@ -197,6 +197,7 @@ const SwapPage = (props: Props): ReactElement => {
         spacing={2}
         alignItems="center"
         justifyContent="center"
+        width="100%"
       >
         <Typography
           sx={{
@@ -208,7 +209,8 @@ const SwapPage = (props: Props): ReactElement => {
           SWAP PAGE
         </Typography>
         <Typography
-          width="50%"
+          maxWidth="100%"
+          width="340px"
           sx={{
             fontFamily: "POPPINS",
             fontSize: "16px",
@@ -221,7 +223,7 @@ const SwapPage = (props: Props): ReactElement => {
           porttitor
         </Typography>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={4} width="100%">
         <Paper style={{ borderRadius: 0 }}>
           <Box p={{ xs: 3, md: 4 }} flex={1}>
             <Box>

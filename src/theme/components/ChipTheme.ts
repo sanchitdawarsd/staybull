@@ -73,7 +73,6 @@ export default function ChipTheme(theme: Theme): Components {
           borderRadius: 0,
         },
         labelMedium: {
-          minWidth: 70,
           textAlign: "center",
           fontSize: theme.typography.subtitle1.fontSize,
           fontWeight: theme.typography.subtitle1.fontWeight,

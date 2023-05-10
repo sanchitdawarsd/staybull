@@ -4,7 +4,7 @@ import {
   Button,
   Divider,
   Drawer,
-  // IconButton,
+  IconButton,
   Stack,
   Toolbar,
   styled,
@@ -12,7 +12,7 @@ import {
   useTheme,
 } from "@mui/material"
 import { SDL_TOKEN } from "../constants"
-// import { Menu as MenuIcon, MoreVert } from "@mui/icons-material"
+import { Menu as MenuIcon } from "@mui/icons-material"
 import { NavLink, NavLinkProps, useLocation } from "react-router-dom"
 import React, { ReactElement, useEffect, useState } from "react"
 
@@ -56,20 +56,20 @@ function TopMenu(): ReactElement {
   const isUnderLaptopSize = useMediaQuery(theme.breakpoints.down("lg"))
   const { tokenPricesUSD } = useSelector((state: AppState) => state.application)
   const sdlPrice = tokenPricesUSD?.[SDL_TOKEN.symbol]
-  // const handleSettingMenu = (
-  //   event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  // ) => {
-  //   setAnchorEl(event.currentTarget)
-  // }
-  // const handleMoreMenu = (
-  //   event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  // ) => {
-  //   if (isUnderLaptopSize) {
-  //     setDrawerOpen(true)
-  //   } else {
-  //     handleSettingMenu(event)
-  //   }
-  // }
+  const handleSettingMenu = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMoreMenu = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    if (isUnderLaptopSize) {
+      setDrawerOpen(true)
+    } else {
+      handleSettingMenu(event)
+    }
+  }
 
   useEffect(() => {
     document
@@ -133,7 +133,7 @@ function TopMenu(): ReactElement {
               <Web3Status />
             </Box>
             {/* <NetworkDisplay onClick={handleSettingMenu} /> */}
-            {/* <IconButton
+            <IconButton
               onClick={handleMoreMenu}
               data-testid="settingsMenuBtn"
               sx={{
@@ -143,14 +143,10 @@ function TopMenu(): ReactElement {
                 borderRadius: theme.spacing(1),
               }}
             >
-              <MoreVert
-                htmlColor={theme.palette.text.primary}
-                sx={{ display: isUnderLaptopSize ? "none" : "block" }}
-              />
               <MenuIcon
                 sx={{ display: !isUnderLaptopSize ? "none" : "block" }}
               />
-            </IconButton> */}
+            </IconButton>
           </Stack>
         </Box>
 
@@ -267,7 +263,11 @@ function SDLPrice({ sdlPrice }: SDLPriceProps): ReactElement | null {
       target="_blank"
       startIcon={<img src={BullIcon} width={20} height={20} />}
       style={{ minWidth: 100 }}
-      sx={{ py: 3, borderRadius: 10 }}
+      sx={{
+        py: 3,
+        borderRadius: 10,
+        display: { xs: "none", md: "inline-flex" },
+      }}
     >
       {`$${sdlPrice.toFixed(2)}`}
     </Button>
