@@ -11,21 +11,21 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material"
-import { IS_SDL_LIVE, SDL_TOKEN } from "../constants"
+import { SDL_TOKEN } from "../constants"
 // import { Menu as MenuIcon, MoreVert } from "@mui/icons-material"
 import { NavLink, NavLinkProps, useLocation } from "react-router-dom"
-import React, { ReactElement, useContext, useEffect, useState } from "react"
+import React, { ReactElement, useEffect, useState } from "react"
 
 import { AppState } from "../state"
 // import NetworkDisplay from "./NetworkDisplay"
-import { RewardsBalancesContext } from "../providers/RewardsBalancesProvider"
-import BullIcon from "../assets/bull-icon.png"
+//import { RewardsBalancesContext } from "../providers/RewardsBalancesProvider"
+import BullIcon from "../assets/bullLogo.png"
 import BullLogo from "./BullLogo"
 import SiteSettingsMenu from "./SiteSettingsMenu"
 import TokenClaimDialog from "./TokenClaimDialog"
 import Web3Status from "./Web3Status"
 import { areGaugesActive } from "../utils/gauges"
-import { formatBNToShortString } from "../utils"
+//import { formatBNToShortString } from "../utils"
 import { isMainnet } from "../hooks/useContract"
 import { useActiveWeb3React } from "../hooks"
 import { useSelector } from "react-redux"
@@ -128,7 +128,7 @@ function TopMenu(): ReactElement {
             alignItems="center"
           >
             <SDLPrice sdlPrice={sdlPrice} />
-            <RewardsButton setCurrentModal={setCurrentModal} />
+            {/* <RewardsButton setCurrentModal={setCurrentModal} /> */}
             <Box display={isUnderLaptopSize ? "none" : "block"}>
               <Web3Status />
             </Box>
@@ -185,27 +185,28 @@ function TopMenu(): ReactElement {
   )
 }
 
-function RewardsButton({
-  setCurrentModal,
-}: {
-  setCurrentModal: React.Dispatch<React.SetStateAction<string | null>>
-}): ReactElement | null {
-  const rewardBalances = useContext(RewardsBalancesContext)
-  const formattedTotal = formatBNToShortString(rewardBalances.total, 18)
+// function RewardsButton({
+//   setCurrentModal,
+// }: {
+//   setCurrentModal: React.Dispatch<React.SetStateAction<string | null>>
+// }): ReactElement | null {
+//   const rewardBalances = useContext(RewardsBalancesContext)
+//   const formattedTotal = formatBNToShortString(rewardBalances.total, 18)
 
-  return IS_SDL_LIVE ? (
-    <Button
-      variant="outlined"
-      color="primary"
-      data-testid="rewardButton"
-      onClick={() => setCurrentModal("tokenClaim")}
-      endIcon={<img src={BullIcon} width={20} height={20} />}
-      sx={{ py: 3, borderRadius: 10 }}
-    >
-      {formattedTotal}
-    </Button>
-  ) : null
-}
+//   return IS_SDL_LIVE ? (
+//     <Button
+//       variant="outlined"
+//       color="primary"
+//       data-testid="rewardButton"
+//       onClick={() => setCurrentModal("tokenClaim")}
+//       endIcon={<img src={BullIcon} width={20} height={20} />}
+//       sx={{ py: 3, borderRadius: 10 }}
+//     >
+//       {formattedTotal}
+//       {"haha"}
+//     </Button>
+//   ) : null
+// }
 
 function MenuList() {
   const { t } = useTranslation()
@@ -256,8 +257,7 @@ interface SDLPriceProps {
 function SDLPrice({ sdlPrice }: SDLPriceProps): ReactElement | null {
   if (sdlPrice === undefined) return null
 
-  const SUSHI_WETH_SDL_POOL_URL =
-    "https://ethereum.sushi.com/swap?inputCurrency=ETH&outputCurrency=0xf1Dc500FdE233A4055e25e5BbF516372BC4F6871"
+  const SUSHI_WETH_SDL_POOL_URL = "https://staybull.fi"
   return (
     <Button
       variant="outlined"
