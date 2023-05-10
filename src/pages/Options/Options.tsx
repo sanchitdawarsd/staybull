@@ -24,7 +24,6 @@ const Options = () => {
       </Typography>
 
       <Box
-        width={700}
         p={3}
         sx={{
           border: "solid 2px #00ef80",
@@ -36,10 +35,10 @@ const Options = () => {
           Strike price: $0.03365 $oBULL Price: $0.07078 $BULL Discount: 52.46%
         </Typography>
         <div style={{ margin: "auto", textAlign: "center" }}>
-          <InputField balance={0} value={0} name={"oBull"} logoUrl={OBULLogo} />
-          <InputField balance={0} value={0} name={"USDC"} logoUrl={UsdcLogo} />
+          <InputField balance={0} name={"oBull"} logoUrl={OBULLogo} />
+          <InputField balance={0} name={"USDC"} logoUrl={UsdcLogo} />
           <ArrowDownwardIcon sx={{ marginTop: 2 }} />
-          <InputField balance={0} value={0} name={"Bull"} logoUrl={BullLogo} />
+          <InputField balance={0} name={"Bull"} logoUrl={BullLogo} />
         </div>
         <Button
           fullWidth

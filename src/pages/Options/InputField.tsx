@@ -1,18 +1,14 @@
 import { Box, TextField, Typography } from "@mui/material"
-import React from "react"
+import React, { useState } from "react"
 
 type myProps = {
   balance: number
-  value: number
   name: string
   logoUrl: string
 }
-const InputField: React.FC<myProps> = ({
-  balance = 0,
-  value = 0,
-  name,
-  logoUrl,
-}) => {
+const InputField: React.FC<myProps> = ({ balance = 0, name, logoUrl }) => {
+  const [inputValue, setInputValue] = useState<string>("0")
+
   return (
     <Box
       sx={{
@@ -30,7 +26,8 @@ const InputField: React.FC<myProps> = ({
         required
         sx={{ margin: 2 }}
         InputProps={{ disableUnderline: true }}
-        value={value}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
       />
       <div style={{ flexDirection: "column", width: "30%" }}>
         <div style={{ display: "flex", alignItems: "center", margin: "2px" }}>
