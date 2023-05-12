@@ -884,9 +884,9 @@ export const STABLECOIN_SWAP_TOKEN = new Token(
 export const STABLECOIN_SWAP_V2_TOKEN = new Token(
   STABLECOIN_SWAP_V2_TOKEN_CONTRACT_ADDRESSES,
   18,
-  "saddleUSD-V2",
-  "saddleusd-v2",
-  "Saddle DAI/USDC/USDT V2",
+  "bullUSD-V2",
+  "bullusd-v2",
+  "Bull DAI/USDC/USDT V2",
   false,
   true,
 )

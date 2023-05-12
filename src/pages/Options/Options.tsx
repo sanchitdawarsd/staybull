@@ -16,7 +16,7 @@ const Options = () => {
           textAlign: "center",
         }}
       >
-        OPTIONS PAGE
+        Unlock $oBULL
       </Typography>
       <Typography variant="body1" textAlign={"center"} mt={2} fontSize={14}>
         oBULL gives its holder the right to purchase BULL at a discount price.

@@ -239,7 +239,7 @@ function MenuList() {
       )} */}
       {isMainnet(chainId) && (
         <NavMenu to="/options" selected={activeTab === "options"}>
-          {t("Options")}
+          {t("Unlock $oBULL")}
         </NavMenu>
       )}
     </React.Fragment>

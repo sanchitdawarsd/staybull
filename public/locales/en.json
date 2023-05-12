@@ -350,7 +350,7 @@
   "withdrawSynth": "Withdraw as",
   "withdrewNToken": "Withdrew {{amount}} {{name}}",
   "withdrawWrapped": "Withdraw wrapped",
-  "wrongNetworkContent": "Oops, looks like you're trying to use Saddle while your wallet is connected to an unsupported network.\n\nPlease switch to Ethereum mainnet or another supported network.",
+  "wrongNetworkContent": "Oops, looks like you're trying to use stayBull while your wallet is connected to an unsupported network.\n\nPlease switch to ARBITUM MAINNET",
   "yes": "Yes",
   "yourVotingPower": "Your voting power",
   "yourRecentTransactions": "Your recent transactions will be here.",
