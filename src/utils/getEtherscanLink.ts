@@ -19,6 +19,9 @@ export function getMultichainScanLink(
     case ChainId.POLYGON:
       chainScanDomain = "polygonscan.com"
       break
+    case ChainId.GOERLI:
+      chainScanDomain = "goerli.etherscan.io"
+      break
     case ChainId.OPTIMISM:
       chainScanDomain = "optimistic.etherscan.io"
       break

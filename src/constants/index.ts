@@ -1,7 +1,7 @@
 import {
   injectedMetaMaskProvider,
-  injectedTallyProvider,
-  uauth,
+  // injectedTallyProvider,
+  // uauth,
   walletconnect,
   walletlink,
 } from "../connectors"
@@ -12,8 +12,8 @@ import { BigNumber } from "@ethersproject/bignumber"
 import { ChainId } from "./networks"
 import coinbasewalletIcon from "../assets/icons/coinbasewallet.svg"
 import metamaskIcon from "../assets/icons/metamask.svg"
-import tallyIcon from "../assets/icons/tally.svg"
-import unstoppableDomainsLogo from "../assets/icons/unstoppableDomainsLogo.png"
+// import tallyIcon from "../assets/icons/tally.svg"
+// import unstoppableDomainsLogo from "../assets/icons/unstoppableDomainsLogo.png"
 import walletconnectIcon from "../assets/icons/walletconnect.svg"
 
 export const NetworkContextName = "NETWORK"
@@ -22,6 +22,7 @@ export const BTC_POOL_V2_NAME = "BTC V2"
 export const EVMOS_BTC_POOL_NAME = "Evmos BTC"
 export const STABLECOIN_POOL_NAME = "USD"
 export const STABLECOIN_POOL_V2_NAME = "$BULL Boosted USDv2"
+export const BULL_FARM_NAME = "FARM BULL TOKEN"
 export const VETH2_POOL_NAME = "vETH2"
 export const ALETH_POOL_NAME = "alETH"
 export const D4_POOL_NAME = "D4"
@@ -62,6 +63,7 @@ export type PoolName =
   | typeof BTC_POOL_V2_NAME
   | typeof STABLECOIN_POOL_NAME
   | typeof STABLECOIN_POOL_V2_NAME
+  | typeof BULL_FARM_NAME
   | typeof VETH2_POOL_NAME
   | typeof ALETH_POOL_NAME
   | typeof D4_POOL_NAME
@@ -158,11 +160,13 @@ export const PERMISSIONLESS_DEPLOYER_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.HARDHAT]: "0xD5ac451B0c50B9476107823Af206eD814a2e2580",
   [ChainId.MAINNET]: "0x8f43fBDDc10b822AFA26812fB9058CA1fC22078F",
   [ChainId.POLYGON]: "0x27120425A89237B35a5B7c384A8c415Ecc74Ab9a",
+  [ChainId.GOERLI]: "0xa4BaE310078b09ef7EFc540Ad6d621AE6499F400",
 })
 
 export const MASTER_REGISTRY_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.HARDHAT]: "0xe8D2A1E88c91DCd5433208d4152Cc4F399a7e91d",
   [ChainId.POLYGON]: "0x2a9FA916e21DFC6CA8a4Ce8Ea0294a9a508c1D15",
+  [ChainId.GOERLI]: "0x3aE9df37c3F01C1eCf7987cA855aeB5B440cAce5",
   [ChainId.MAINNET]: "0xc5ad17b98D7fe73B6dD3b0df5b3040457E68C045",
   [ChainId.ROPSTEN]: "0xA287A3921AF80fB33E80897C6879DfFbA8527780",
   [ChainId.EVMOS]: "0xBa684B8E05415726Ee1fFE197eaf1b82E4d44418",
@@ -171,6 +175,18 @@ export const MASTER_REGISTRY_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.ARBITRUM]: "0xaB94A2c0D8F044AA439A5654f06b5797928396cF",
   [ChainId.KAVA]: "0x3A0c2A793a8DB779e0293699D0Ce77c77617FE0f",
   [ChainId.AURORA]: "0x29FD31d37AB8D27f11EAB68F96424bf64231fFce",
+})
+export const ORACLE_ADDRESS = buildAddresses({
+  [ChainId.POLYGON]: "0x2a9FA916e21DFC6CA8a4Ce8Ea0294a9a508c1D15",
+  [ChainId.GOERLI]: "0xD75D7AC2F54Abaa5B6D8e5542b144797708eF9B8",
+})
+export const OPTIONS_ADDRESS = buildAddresses({
+  [ChainId.POLYGON]: "0x2a9FA916e21DFC6CA8a4Ce8Ea0294a9a508c1D15",
+  [ChainId.GOERLI]: "0xbB01AFf00d6786B63325771Fb21A6F37564ddCBb",
+})
+export const BULL_ADDRESS = buildAddresses({
+  [ChainId.POLYGON]: "0x2a9FA916e21DFC6CA8a4Ce8Ea0294a9a508c1D15",
+  [ChainId.GOERLI]: "0x1bAAED97039B00e62183aA70642F646124b6b001",
 })
 
 export const SDL_WETH_SUSHI_LP_CONTRACT_ADDRESSES = buildAddresses({
@@ -318,6 +334,7 @@ export const WCUSD_META_SWAP_V3_DEPOSIT_ADDRESSES = buildAddresses({
 export const STABLECOIN_SWAP_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0x3911F80530595fBd01Ab1516Ab61255d75AEb066",
   [ChainId.POLYGON]: "0x6C0e4F8675B20ed28B69c75724a2D64ae27BCA5F",
+  [ChainId.GOERLI]: "0xBAC10354DaB91754DbEE492b14AD58BdFFd6A6d1",
   [ChainId.ROPSTEN]: "0xbCED0cB1e8022869678d40b3c71FA7A443CA8090",
   [ChainId.HARDHAT]: "0x98A0Bc3f9FdAD482CB2e40dE1291f8b0A6FE1860",
 })
@@ -325,7 +342,16 @@ export const STABLECOIN_SWAP_ADDRESSES = buildAddresses({
 export const STABLECOIN_SWAP_V2_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7",
   [ChainId.POLYGON]: "0xD0C5eD25Bc3331aa67b33d94c942CD3D3D6b8395",
+  [ChainId.GOERLI]: "0xb201A09e4dA328cd8B772195a5B1e1C4bA5B28e9",
   [ChainId.HARDHAT]: "0xbf9fBFf01664500A33080Da5d437028b07DFcC55",
+})
+export const STABLECOIN_FARM_V2_ADDRESSES = buildAddresses({
+  [ChainId.MAINNET]: "0xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7",
+  [ChainId.GOERLI]: "0xb201A09e4dA328cd8B772195a5B1e1C4bA5B28e9",
+})
+export const BULL_FARM_V2_ADDRESSES = buildAddresses({
+  [ChainId.MAINNET]: "0xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7",
+  [ChainId.GOERLI]: "0xb201A09e4dA328cd8B772195a5B1e1C4bA5B28e9",
 })
 
 export const BTC_SWAP_ADDRESSES = buildAddresses({
@@ -452,6 +478,7 @@ export const STABLECOIN_SWAP_TOKEN_CONTRACT_ADDRESSES = buildAddresses({
 export const STABLECOIN_SWAP_V2_TOKEN_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0x5f86558387293b6009d7896A61fcc86C17808D62",
   [ChainId.POLYGON]: "0xb410c815139ad3352afA7F03cd47573dbEc01535",
+  [ChainId.GOERLI]: "0x91A34132F2B6CA6D6f24eAfF62B970bEf1170F64",
   [ChainId.HARDHAT]: "0xC863F1F636fddce400E7515eCBDAbbEc4d1E0390",
 })
 
@@ -890,6 +917,15 @@ export const STABLECOIN_SWAP_V2_TOKEN = new Token(
   false,
   true,
 )
+export const BULL_TOKEN = new Token(
+  BULL_ADDRESS,
+  18,
+  "BULL",
+  "BULL",
+  "Bull",
+  false,
+  true,
+)
 
 export const WCUSD_SWAP_TOKEN = new Token(
   WCUSD_SWAP_TOKEN_CONTRACT_ADDRESSES,
@@ -1157,6 +1193,7 @@ export const WCUSD = new Token(
 const SUSD_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0x57Ab1ec28D129707052df4dF418D58a2D46d5f51",
   [ChainId.POLYGON]: "0xAf7f7CB5A9D313448fbcb869D7c74e799e8a171b",
+  [ChainId.GOERLI]: "0xB14265dC834Ac04F5461754f2c0dd871D5cFFDFA",
   [ChainId.HARDHAT]: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
   [ChainId.OPTIMISM]: "0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9",
 })
@@ -1172,6 +1209,7 @@ export const SUSD = new Token(
 const DAI_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
   [ChainId.POLYGON]: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+  [ChainId.GOERLI]: "0xa00DD8184057770DeFc855554eB729962Fd41bDF",
   [ChainId.ROPSTEN]: "0x8C924e41d0624Ae6E7DB09fc93BBfB324c31BE0C",
   [ChainId.HARDHAT]: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
   [ChainId.OPTIMISM]: "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
@@ -1196,9 +1234,10 @@ export const MAD_DAI = new Token(
   "madDAI",
 )
 
-const USDC_CONTRACT_ADDRESSES = buildAddresses({
+export const USDC_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   [ChainId.POLYGON]: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+  [ChainId.GOERLI]: "0x61E59Bd302fCbF7e1C656E3ecbe67DBD6b779678",
   [ChainId.ROPSTEN]: "0xA4fe4981f7550884E7E6224F0c78245DC145b2F2",
   [ChainId.HARDHAT]: "0x9A676e781A523b5d0C0e43731313A708CB607508",
   [ChainId.ARBITRUM]: "0xff970a61a04b1ca14834a43f5de4533ebddb5cc8",
@@ -1235,6 +1274,7 @@ export const MAD_USDC = new Token(
 const USDT_CONTRACT_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0xdac17f958d2ee523a2206206994597c13d831ec7",
   [ChainId.POLYGON]: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+  [ChainId.GOERLI]: "0x31e6d6dBFb9853FDD8E29C8C044786aF05c9dB1A",
   [ChainId.ROPSTEN]: "0x0593d1b92e8Ba6bBC428923245891efF0311Fa15",
   [ChainId.HARDHAT]: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
   [ChainId.ARBITRUM]: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
@@ -1467,6 +1507,7 @@ export const SBTC = new Token(
 
 export const BTC_POOL_TOKENS = [TBTC, WBTC, RENBTC, SBTC]
 export const BTC_POOL_V2_TOKENS = [WBTC, RENBTC, SBTC]
+export const BULL_TOKENS = [BULL_TOKEN]
 
 export const TBTC_POOL_TOKENS = [TBTC_V2, ...BTC_POOL_V2_TOKENS]
 export const TBTC_UNDERLYING_POOL_TOKENS = [TBTC_V2, BTC_SWAP_V2_TOKEN]
@@ -1583,6 +1624,31 @@ export type Pool = {
 }
 export type PoolsMap = {
   [poolName: string]: Pool
+}
+export type FarmsMap = {
+  [poolName: string]: Pool
+}
+export const FARMS_MAP: FarmsMap = {
+  [STABLECOIN_POOL_V2_NAME]: {
+    name: STABLECOIN_POOL_V2_NAME,
+    addresses: STABLECOIN_SWAP_V2_ADDRESSES,
+    lpToken: STABLECOIN_SWAP_V2_TOKEN,
+    poolTokens: STABLECOIN_POOL_TOKENS,
+    isSynthetic: false,
+    type: PoolTypes.USD,
+    route: "usdv2",
+    rewardPids: buildPids({ [ChainId.MAINNET]: 1, [ChainId.HARDHAT]: 1 }),
+  },
+  [BULL_FARM_NAME]: {
+    name: BULL_FARM_NAME,
+    addresses: BULL_FARM_V2_ADDRESSES,
+    lpToken: BULL_TOKEN,
+    poolTokens: BTC_POOL_V2_TOKENS,
+    isSynthetic: true,
+    type: PoolTypes.BTC,
+    route: "bull",
+    rewardPids: buildPids({ [ChainId.MAINNET]: 0, [ChainId.HARDHAT]: 0 }),
+  },
 }
 export const POOLS_MAP: PoolsMap = {
   // [BTC_POOL_NAME]: {
@@ -2207,21 +2273,21 @@ export interface WalletInfo {
 }
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
-  TALLY: {
-    name: "Tally",
-    icon: tallyIcon,
-    connector: injectedTallyProvider,
-  },
+  // TALLY: {
+  //   name: "Tally",
+  //   icon: tallyIcon,
+  //   connector: injectedTallyProvider,
+  // },
   METAMASK: {
     name: "MetaMask",
     icon: metamaskIcon,
     connector: injectedMetaMaskProvider,
   },
-  UNSTOPPABLE_DOMAINS: {
-    name: "Unstoppable Domains",
-    icon: unstoppableDomainsLogo,
-    connector: uauth,
-  },
+  // UNSTOPPABLE_DOMAINS: {
+  //   name: "Unstoppable Domains",
+  //   icon: unstoppableDomainsLogo,
+  //   connector: uauth,
+  // },
   WALLET_CONNECT: {
     name: "WalletConnect",
     icon: walletconnectIcon,

@@ -3,6 +3,7 @@ import { hexlify } from "@ethersproject/bytes"
 export enum ChainId {
   MAINNET = 1,
   ROPSTEN = 3,
+  GOERLI = 5,
   // RINKEBY = 4,
   POLYGON = 137,
   // KOVAN = 42,
@@ -20,6 +21,7 @@ export enum ChainId {
 
 export const NETWORK_LABEL: Partial<Record<ChainId, string>> = {
   [ChainId.MAINNET]: "Ethereum",
+  [ChainId.GOERLI]: "GOERLI",
   [ChainId.POLYGON]: "POLYGON",
   [ChainId.ARBITRUM]: "Arbitrum",
   [ChainId.OPTIMISM]: "Optimism",
@@ -36,7 +38,8 @@ export const NETWORK_LABEL: Partial<Record<ChainId, string>> = {
 // TODO: figure out better way of representing non-erc20 native tokens
 export const NETWORK_NATIVE_TOKENS: Record<ChainId, string> = {
   [ChainId.MAINNET]: "ETH",
-  [ChainId.POLYGON]: "GETH",
+  [ChainId.GOERLI]: "GETH",
+  [ChainId.POLYGON]: "MATIC",
   [ChainId.ARBITRUM]: "ETH",
   [ChainId.OPTIMISM]: "ETH",
   [ChainId.FANTOM]: "FTM",
@@ -51,6 +54,7 @@ export const NETWORK_NATIVE_TOKENS: Record<ChainId, string> = {
 }
 export const COINGECKO_PLATFORM_ID: Record<ChainId, string | null> = {
   [ChainId.MAINNET]: "ethereum",
+  [ChainId.GOERLI]: null,
   [ChainId.POLYGON]: null,
   [ChainId.ARBITRUM]: "arbitrum-one",
   [ChainId.OPTIMISM]: "optimistic-ethereum",
@@ -154,6 +158,17 @@ export const SUPPORTED_NETWORKS: SupportedNetworks = {
     rpcUrls: ["https://polygon-mainnet.g.alchemy.com/v2/"],
     blockExplorerUrls: ["https://polygonscan.com"],
   },
+  [ChainId.GOERLI]: {
+    chainId: hexlify(5),
+    chainName: "Goerli Testnet",
+    nativeCurrency: {
+      name: "gETH",
+      symbol: "GETH",
+      decimals: 18,
+    },
+    rpcUrls: ["https://goerli.infura.io/v3/"],
+    blockExplorerUrls: ["https://goerli.etherscan.io"],
+  },
 }
 
 export const DEV_SUPPORTED_NETWORKS: SupportedNetworks = {
@@ -186,5 +201,16 @@ export const DEV_SUPPORTED_NETWORKS: SupportedNetworks = {
     },
     rpcUrls: ["https://evm.testnet.kava.io"],
     blockExplorerUrls: ["https://explorer.evm-alpha.kava.io"],
+  },
+  [ChainId.GOERLI]: {
+    chainId: hexlify(5),
+    chainName: "Goerli Testnet",
+    nativeCurrency: {
+      name: "gETH",
+      symbol: "GETH",
+      decimals: 18,
+    },
+    rpcUrls: ["https://goerli.infura.io/v3/"],
+    blockExplorerUrls: ["https://goerli.etherscan.io"],
   },
 }

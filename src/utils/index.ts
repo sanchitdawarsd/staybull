@@ -398,6 +398,19 @@ export async function getMulticallProvider(
       address: "0x70B1D4fF642297A302fd570fEFd871194964cf67",
       block: 0,
     }
+  } else if (chainId === ChainId.GOERLI) {
+    ethcallProvider.multicall3 = {
+      address: "0xdaeE4Cc0Ff5a8627c9B3396F9DFC9E61ad2BB702",
+      block: 0,
+    }
+    ethcallProvider.multicall2 = {
+      address: "0x029B654E9F7581dc3d33d6d7995C05472cfD2bE4",
+      block: 0,
+    }
+    ethcallProvider.multicall = {
+      address: "0x538D50acb285528fb92CD68420c0c20950a70487",
+      block: 0,
+    }
   } else if (chainId === ChainId.KAVA_TESTNET) {
     ethcallProvider.multicall3 = {
       address: "0x9AA75e03e93f69E1F399ddeD0dA5fFCbE914D099",

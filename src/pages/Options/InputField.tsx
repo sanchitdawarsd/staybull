@@ -1,14 +1,21 @@
 import { Box, TextField, Typography } from "@mui/material"
-import React, { useState } from "react"
+import { BigNumber } from "ethers"
+import React from "react"
 
 type myProps = {
-  balance: number
+  balance: BigNumber
   name: string
   logoUrl: string
+  onInput: (e: string) => void
+  value: number
 }
-const InputField: React.FC<myProps> = ({ balance = 0, name, logoUrl }) => {
-  const [inputValue, setInputValue] = useState<string>("0")
-
+const InputField: React.FC<myProps> = ({
+  balance = 0,
+  name,
+  logoUrl,
+  onInput,
+  value,
+}) => {
   return (
     <Box
       sx={{
@@ -26,8 +33,8 @@ const InputField: React.FC<myProps> = ({ balance = 0, name, logoUrl }) => {
         required
         sx={{ margin: 2 }}
         InputProps={{ disableUnderline: true }}
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        value={value}
+        onChange={(e) => onInput(e.target.value)}
       />
       <div style={{ flexDirection: "column", width: "30%" }}>
         <div style={{ display: "flex", alignItems: "center", margin: "2px" }}>
@@ -36,7 +43,9 @@ const InputField: React.FC<myProps> = ({ balance = 0, name, logoUrl }) => {
             {name}
           </Typography>
         </div>
-        <Typography fontSize={11}>Balance: {balance.toFixed(4)}</Typography>
+        <Typography fontSize={11} onClick={() => onInput(balance.toString())}>
+          Balance: {parseInt(balance.toString()).toFixed(4)}
+        </Typography>
       </div>
     </Box>
   )

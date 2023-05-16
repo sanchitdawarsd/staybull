@@ -35,6 +35,7 @@ export const communityPoolsEnabled = (chainId: ChainId | undefined) => {
     chainId &&
     [
       ChainId.MAINNET,
+      ChainId.GOERLI,
       ChainId.POLYGON,
       ChainId.HARDHAT,
       ChainId.ARBITRUM,

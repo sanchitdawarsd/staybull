@@ -8,6 +8,8 @@ import {
   GENERALIZED_SWAP_MIGRATOR_CONTRACT_ADDRESSES,
   MASTER_REGISTRY_CONTRACT_ADDRESSES,
   MINICHEF_CONTRACT_ADDRESSES,
+  OPTIONS_ADDRESS,
+  ORACLE_ADDRESS,
   RETROACTIVE_VESTING_CONTRACT_ADDRESSES,
   ROOT_GAUGE_FACTORY_CONTRACT_ADDRESSES,
   SDL_TOKEN_ADDRESSES,
@@ -15,6 +17,7 @@ import {
   SYNTHETIX_CONTRACT_ADDRESSES,
   SYNTHETIX_EXCHANGE_RATES_CONTRACT_ADDRESSES,
   Token,
+  USDC_CONTRACT_ADDRESSES,
   VOTING_ESCROW_CONTRACT_ADDRESS,
 } from "../constants"
 import { Contract, ContractInterface } from "@ethersproject/contracts"
@@ -48,6 +51,8 @@ import { LiquidityGaugeV5 } from "./../../types/ethers-contracts/LiquidityGaugeV
 import { LpTokenGuarded } from "../../types/ethers-contracts/LpTokenGuarded"
 import { LpTokenUnguarded } from "../../types/ethers-contracts/LpTokenUnguarded"
 import MASTER_REGISTRY_ABI from "../constants/abis/masterRegistry.json"
+import ORACLE_ABI from "../constants/abis/oracle.json"
+import OPTIONS_ABI from "../constants/abis/options.json"
 import MINICHEF_CONTRACT_ABI from "../constants/abis/miniChef.json"
 import { MasterRegistry } from "../../types/ethers-contracts/MasterRegistry"
 import { MetaSwapDeposit } from "../../types/ethers-contracts/MetaSwapDeposit"
@@ -78,6 +83,8 @@ import { VotingEscrow } from "../../types/ethers-contracts/VotingEscrow"
 import { Web3Provider } from "@ethersproject/providers"
 import { formatBytes32String } from "@ethersproject/strings"
 import { useActiveWeb3React } from "./index"
+import { Oracle } from "../../types/ethers-contracts/Oracle"
+import { Options } from "../../types/ethers-contracts/Options"
 
 export const POOL_REGISTRY_NAME = "PoolRegistry"
 export const CHILD_GAUGE_FACTORY_NAME = "ChildGaugeFactory"
@@ -116,6 +123,21 @@ export function useMasterRegistry(): MasterRegistry | null {
     MASTER_REGISTRY_ABI,
     false,
   ) as MasterRegistry
+}
+export function useOracle(): Oracle | null {
+  const { chainId } = useActiveWeb3React()
+  const contractAddress = chainId ? ORACLE_ADDRESS[chainId] : undefined
+  return useContract(contractAddress, ORACLE_ABI, false) as Oracle
+}
+export function useOptions(): Options | null {
+  const { chainId } = useActiveWeb3React()
+  const contractAddress = chainId ? OPTIONS_ADDRESS[chainId] : undefined
+  return useContract(contractAddress, OPTIONS_ABI, true) as Options
+}
+export function useUsdc(): Oracle | null {
+  const { chainId } = useActiveWeb3React()
+  const contractAddress = chainId ? USDC_CONTRACT_ADDRESSES[chainId] : undefined
+  return useContract(contractAddress, ERC20_ABI, false) as Oracle
 }
 
 export function usePoolRegistry(): PoolRegistry | null {
@@ -504,6 +526,6 @@ export const getRootGaugeFactory = (
 
 export const isMainnet = (chainId?: ChainId): boolean => {
   return (
-    !!chainId && (chainId === ChainId.MAINNET || chainId === ChainId.POLYGON)
+    !!chainId && (chainId === ChainId.GOERLI || chainId === ChainId.MAINNET)
   )
 }

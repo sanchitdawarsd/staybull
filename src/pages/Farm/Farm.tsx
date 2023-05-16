@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import { BN_1E18, BN_DAY_IN_SECONDS } from "../../constants"
 import {
   Box,
@@ -41,7 +42,7 @@ export default function Farm(): JSX.Element {
   const gaugeAprs = useContext(AprsContext)
   const userState = useContext(UserStateContext)
   const getGaugeTVL = useGaugeTVL()
-
+  console.log(gauges, "check2")
   const farmData = Object.values(gauges)
     .filter(({ isKilled }) => !isKilled)
     .map((gauge) => {
@@ -88,12 +89,12 @@ export default function Farm(): JSX.Element {
     })
     .sort((a, b) => {
       // Put SLP gauge at top
-      if (a.gauge.gaugeName === sushiGaugeName) {
-        return -1
-      }
-      if (b.gauge.gaugeName === sushiGaugeName) {
-        return 1
-      }
+      // if (a.gauge.gaugeName === sushiGaugeName) {
+      //   return -1
+      // }
+      // if (b.gauge.gaugeName === sushiGaugeName) {
+      //   return 1
+      // }
       // Sort by highest user balance
       if (a.myStake.gt(b.myStake)) {
         return -1
