@@ -1,5 +1,10 @@
 /* eslint-disable*/
-import { BN_1E18, BN_DAY_IN_SECONDS, FARMS_MAP } from "../../constants"
+import {
+  BN_1E18,
+  BN_DAY_IN_SECONDS,
+  FARMS_MAP,
+  PoolTypes,
+} from "../../constants"
 import {
   Box,
   Container,
@@ -13,7 +18,7 @@ import {
 } from "@mui/material"
 import React, { useContext, useEffect, useState } from "react"
 
-import { AprsContext } from "../../providers/AprsProvider"
+import { AprsContext, GaugeApr } from "../../providers/AprsProvider"
 import { BasicPoolsContext } from "../../providers/BasicPoolsProvider"
 import ClaimRewardsDlg from "./ClaimRewardsDlg"
 import FarmOverview from "./FarmOverview"
@@ -26,6 +31,11 @@ import { Zero } from "@ethersproject/constants"
 import { formatUnits } from "ethers/lib/utils"
 import useGaugeTVL from "../../hooks/useGaugeTVL"
 import { useActiveWeb3React } from "../../hooks"
+import { useOracle, useToken } from "../../hooks/useContract"
+import { Erc20 } from "../../../types/ethers-contracts/Erc20"
+import { BigNumber } from "@ethersproject/bignumber"
+import { ethers } from "ethers"
+import { getGaugeContract } from "../../hooks/useContract"
 // import { useTranslation } from "react-i18next"
 
 type ActiveGauge = {
@@ -36,7 +46,7 @@ type ActiveGauge = {
 }
 const sushiGaugeName = "SLP-gauge"
 export default function Farm(): JSX.Element {
-  const { chainId } = useActiveWeb3React()
+  const { account, library, chainId } = useActiveWeb3React()
   const [activeGauge, setActiveGauge] = useState<ActiveGauge | undefined>()
   const [activeDialog, setActiveDialog] = useState<
     "stake" | "claim" | undefined
@@ -109,6 +119,117 @@ export default function Farm(): JSX.Element {
       return a.tvl.gt(b.tvl) ? -1 : 1
     })
 
+  const contract = useOracle()
+  const lptoken0: Erc20 = useToken(FARMS_MAP[0].lpToken)!
+  const lptoken1: Erc20 = useToken(FARMS_MAP[1].lpToken)!
+  const appContract: Erc20 = useToken(
+    "0xADc97c479C56B0105674d960B528FE8788c99D43",
+  )!
+
+  const [balances, setBalances] = useState<BigNumber[]>([])
+  const [stakedLps, setStakedLps] = useState<BigNumber[]>([])
+  const [stakedAprs, setStakedAprs] = useState<GaugeApr[][]>([])
+  const [bcPrice, setBcPrice] = useState<BigNumber>(Zero)
+
+  useEffect(() => {
+    async function getBalance() {
+      const price = await contract.estimateAmountOut(
+        "0x1bAAED97039B00e62183aA70642F646124b6b001",
+        ethers.BigNumber.from("1000000000000000000"),
+        10,
+      )
+      setBcPrice(price)
+
+      let balances: BigNumber[] = await Promise.all([
+        lptoken0.balanceOf(FARMS_MAP[0].addresses),
+        lptoken1.balanceOf(FARMS_MAP[1].addresses),
+      ])
+      balances[1] = balances[1].mul(price)
+      setBalances(balances)
+    }
+
+    async function getStakedLps() {
+      if (account == null || chainId == null || library == null) {
+        return
+      }
+      const gaugeContract = getGaugeContract(
+        library!,
+        chainId!,
+        FARMS_MAP[0].addresses,
+        account!,
+      )
+      const userInfos = await Promise.all([
+        gaugeContract.userInfo(FARMS_MAP[0].pid, account),
+        gaugeContract.userInfo(FARMS_MAP[1].pid, account),
+      ])
+      const stakedAmounts = userInfos.map(
+        (info: { amount: BigNumber }) => info.amount,
+      )
+      setStakedLps(stakedAmounts)
+    }
+
+    async function getAprs() {
+      console.log(
+        "****************getAprs********************************************",
+      )
+      // const appPrice = await contract.estimateAmountOut(
+      //   "0xADc97c479C56B0105674d960B528FE8788c99D43",
+      //   ethers.BigNumber.from("1000000000000000000"),
+      //   10,
+      // )
+      const appPrice = BigNumber.from("1000000000000000000")
+
+      let appBalances: BigNumber[] = await Promise.all([
+        appContract.balanceOf(FARMS_MAP[0].addresses),
+        appContract.balanceOf(FARMS_MAP[1].addresses),
+      ])
+
+      await getBalance()
+
+      const value0: BigNumber = balances[0].isZero()
+        ? Zero
+        : appPrice.mul(appBalances[0]).div(balances[0])
+      const value1: BigNumber = balances[1].isZero()
+        ? Zero
+        : appPrice.mul(appBalances[1]).div(balances[1])
+
+      console.log({ value0, value1 })
+
+      const rewardToken = {
+        address: "0xADc97c479C56B0105674d960B528FE8788c99D43",
+        name: "apple",
+        symbol: "app",
+        decimals: 6,
+        isLPToken: true,
+        isOnTokenLists: true,
+        typeAsset: PoolTypes.USD,
+        isSynthetic: true,
+      }
+      const apr0: GaugeApr = {
+        rewardToken,
+        apr: {
+          min: value0,
+          max: value0,
+        },
+      }
+
+      const apr1: GaugeApr = {
+        rewardToken,
+        apr: {
+          min: value1,
+          max: value1,
+        },
+      }
+
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", { apr0, apr1 })
+      setStakedAprs([[apr0], [apr1]])
+    }
+
+    getBalance()
+    getStakedLps()
+    getAprs()
+  }, [lptoken0, lptoken1, library, chainId, account])
+
   useEffect(() => {
     // TODO expose this to user once we have designs
     const userTotalRate = farmData.reduce(
@@ -173,17 +294,17 @@ export default function Farm(): JSX.Element {
         zIndex={(theme) => theme.zIndex.mobileStepper - 1}
         sx={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
       >
-        {FARMS_MAP.map(({ addresses, name, lpToken, pid }) => {
+        {FARMS_MAP.map(({ addresses, name, lpToken, pid }, index) => {
           return (
-            <Box key={addresses} my={2}>
+            <Box key={index} my={2}>
               <Divider />
               <FarmOverview
                 addresses={addresses}
                 name={name}
                 // poolTokens={poolTokens}
-                // aprs={aprs}
-                // tvl={tvl}
-                // myStake={myStake}
+                aprs={stakedAprs[index]}
+                tvl={balances[index]}
+                myStake={stakedLps[index]}
                 onClickStake={() => {
                   setActiveDialog("stake")
                   setActiveGauge({

@@ -84,7 +84,6 @@ export default function useUserGauge(): (
       )
 
       const lpToken = tokens?.[lpTokenAddress ?? ""]
-      console.log("tokenss", lpToken)
       if (lpTokenAddress) {
         // const lptokencontract = useToken(lpTokenAddress.toString())
         // let lpdecimal = lptokencontract?.decimals()
