@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import { BasicToken, TokensContext } from "../providers/TokensProvider"
 import {
   SetStateAction,
@@ -13,6 +14,8 @@ import {
   getGaugeMinterContract,
   getVotingEscrowContract,
   isMainnet,
+  useErc20Contract,
+  useToken,
 } from "./useContract"
 
 import { BigNumber } from "@ethersproject/bignumber"
@@ -24,25 +27,27 @@ import { LiquidityGaugeV5 } from "../../types/ethers-contracts/LiquidityGaugeV5"
 import { UserStateContext } from "../providers/UserStateProvider"
 import { Web3Provider } from "@ethersproject/providers"
 import { Zero } from "@ethersproject/constants"
-import { calculateBoost } from "../utils"
+import { calculateBoost, getMulticallProvider } from "../utils"
 import { enqueueToast } from "../components/Toastify"
 import { useActiveWeb3React } from "."
 import { useRegistryAddress } from "./useRegistryAddress"
+import { Masterchef } from "../../types/ethers-contracts/Masterchef"
 
 type UserGauge = {
-  stake: LiquidityGaugeV5["deposit(uint256)"]
-  unstake: LiquidityGaugeV5["withdraw(uint256)"]
-  claim: () => Promise<ContractTransaction[]>
-  lpToken: BasicToken
-  userWalletLpTokenBalance: BigNumber
-  userStakedLpTokenBalance: BigNumber
-  hasClaimableRewards: boolean
-  userGaugeRewards: GaugeUserReward | null
-  boost: BigNumber | null
+  stake: Masterchef["deposit(uint256,uint256)"]
+  unstake: Masterchef["withdraw(uint256,uint256)"]
+  claim: Masterchef["deposit(uint256,uint256)"]
+  // lpToken: BasicToken
+  // userWalletLpTokenBalance: BigNumber
+  // userStakedLpTokenBalance: BigNumber
+  // hasClaimableRewards: boolean
+  // userGaugeRewards: GaugeUserReward | null
+  // boost: BigNumber | null
 }
 
 export default function useUserGauge(): (
   gaugeAddress?: string,
+  lpTokenAddress?: string,
 ) => UserGauge | null {
   const { account, library, chainId } = useActiveWeb3React()
   const { data: registryAddresses } = useRegistryAddress()
@@ -59,6 +64,7 @@ export default function useUserGauge(): (
       if (!account || !chainId || !library) {
         return
       }
+
       await retrieveAndSetSDLValues(
         account,
         chainId,
@@ -72,20 +78,27 @@ export default function useUserGauge(): (
   }, [account, chainId, library])
 
   return useCallback(
-    (gaugeAddress?: string) => {
+    (gaugeAddress?: string, lpTokenAddress?: string) => {
       const gauge = Object.values(gauges).find(
         ({ address }) => address === gaugeAddress,
       )
-      const lpToken = tokens?.[gauge?.lpTokenAddress ?? ""]
+
+      const lpToken = tokens?.[lpTokenAddress ?? ""]
+      console.log("tokenss", lpToken)
+      if (lpTokenAddress) {
+        // const lptokencontract = useToken(lpTokenAddress.toString())
+        // let lpdecimal = lptokencontract?.decimals()
+        // let lpsymbol = lptokencontract?.symbol()
+        // let lpname = lptokencontract?.name()
+        console.log(lpTokenAddress, "details")
+      }
+
       if (
         !account ||
         !chainId ||
-        !gauge ||
         !gaugeAddress ||
-        !library ||
-        !lpToken ||
-        !registryAddresses ||
-        !userState
+        !lpTokenAddress ||
+        !library
       ) {
         return null
       }
@@ -93,73 +106,21 @@ export default function useUserGauge(): (
       const gaugeContract = getGaugeContract(
         library,
         chainId,
-        gauge?.address,
+        gaugeAddress,
         account,
       )
 
-      const userGaugeRewards = userState.gaugeRewards?.[gaugeAddress]
-      const hasSDLRewards = Boolean(userGaugeRewards?.claimableSDL.gt(Zero))
-      const hasExternalRewards = Boolean(
-        userGaugeRewards?.claimableExternalRewards.length,
-      )
-
-      const {
-        gaugeBalance: userLPAmount,
-        gaugeTotalSupply: totalLpAmout,
-        workingBalances: workingBalance,
-        workingSupply,
-      } = gauge
-
-      const boost = calculateBoost(
-        userLPAmount,
-        totalLpAmout,
-        workingBalance,
-        workingSupply,
-        veSdlBalance,
-        totalVeSdl,
-      )
-
       return {
-        stake: gaugeContract["deposit(uint256)"],
-        unstake: gaugeContract["withdraw(uint256)"],
-        claim: async () => {
-          const promises = []
-          try {
-            if (hasExternalRewards) {
-              promises.push(gaugeContract["claim_rewards(address)"](account))
-            }
-
-            if (isMainnet(chainId)) {
-              const gaugeMinterContract = getGaugeMinterContract(
-                library,
-                chainId,
-                account,
-              )
-
-              promises.push(gaugeMinterContract.mint(gaugeAddress))
-            } else {
-              const childGaugeFactory = getChildGaugeFactory(
-                library,
-                chainId,
-                registryAddresses["ChildGaugeFactory"],
-                account,
-              )
-              promises.push(childGaugeFactory.mint(gaugeAddress))
-            }
-          } catch (e) {
-            console.error(e)
-            enqueueToast("error", "Unable to claim reward")
-          }
-
-          return await Promise.all(promises)
-        },
-        hasClaimableRewards: hasSDLRewards || hasExternalRewards,
-        lpToken,
-        userWalletLpTokenBalance:
-          userState.tokenBalances?.[lpToken.address] || Zero,
-        userStakedLpTokenBalance: userGaugeRewards?.amountStaked || Zero,
-        userGaugeRewards: userGaugeRewards || null,
-        boost,
+        stake: gaugeContract["deposit(uint256,uint256)"],
+        unstake: gaugeContract["withdraw(uint256,uint256)"],
+        claim: gaugeContract["deposit(uint256,uint256)"],
+        // hasClaimableRewards: hasSDLRewards || hasExternalRewards,
+        // lpToken,
+        // userWalletLpTokenBalance:
+        //   userState.tokenBalances?.[lpToken.address] || Zero,
+        // userStakedLpTokenBalance: userGaugeRewards?.amountStaked || Zero,
+        // userGaugeRewards: userGaugeRewards || null,
+        // boost,
       }
     },
     [

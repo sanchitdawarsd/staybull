@@ -1,5 +1,5 @@
 /* eslint-disable*/
-import { BN_1E18, BN_DAY_IN_SECONDS } from "../../constants"
+import { BN_1E18, BN_DAY_IN_SECONDS, FARMS_MAP } from "../../constants"
 import {
   Box,
   Container,
@@ -25,14 +25,18 @@ import VeSDLWrongNetworkModal from "../VeSDL/VeSDLWrongNetworkModal"
 import { Zero } from "@ethersproject/constants"
 import { formatUnits } from "ethers/lib/utils"
 import useGaugeTVL from "../../hooks/useGaugeTVL"
+import { useActiveWeb3React } from "../../hooks"
 // import { useTranslation } from "react-i18next"
 
 type ActiveGauge = {
   address: string
+  lpToken: string
   displayName: string
+  rewardsPid: number
 }
 const sushiGaugeName = "SLP-gauge"
 export default function Farm(): JSX.Element {
+  const { chainId } = useActiveWeb3React()
   const [activeGauge, setActiveGauge] = useState<ActiveGauge | undefined>()
   const [activeDialog, setActiveDialog] = useState<
     "stake" | "claim" | undefined
@@ -42,7 +46,6 @@ export default function Farm(): JSX.Element {
   const gaugeAprs = useContext(AprsContext)
   const userState = useContext(UserStateContext)
   const getGaugeTVL = useGaugeTVL()
-  console.log(gauges, "check2")
   const farmData = Object.values(gauges)
     .filter(({ isKilled }) => !isKilled)
     .map((gauge) => {
@@ -170,43 +173,47 @@ export default function Farm(): JSX.Element {
         zIndex={(theme) => theme.zIndex.mobileStepper - 1}
         sx={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
       >
-        {farmData.map(
-          ({ gaugeAddress, farmName, aprs, poolTokens, tvl, myStake }) => {
-            return (
-              <Box key={gaugeAddress} my={2}>
-                <Divider />
-                <FarmOverview
-                  gaugeAddress={gaugeAddress}
-                  farmName={farmName}
-                  poolTokens={poolTokens}
-                  aprs={aprs}
-                  tvl={tvl}
-                  myStake={myStake}
-                  onClickStake={() => {
-                    setActiveDialog("stake")
-                    setActiveGauge({
-                      address: gaugeAddress,
-                      displayName: farmName,
-                    })
-                  }}
-                  onClickClaim={() => {
-                    setActiveDialog("claim")
-                    setActiveGauge({
-                      address: gaugeAddress,
-                      displayName: farmName,
-                    })
-                  }}
-                />
-              </Box>
-            )
-          },
-        )}
+        {FARMS_MAP.map(({ addresses, name, lpToken, pid }) => {
+          return (
+            <Box key={addresses} my={2}>
+              <Divider />
+              <FarmOverview
+                addresses={addresses}
+                name={name}
+                // poolTokens={poolTokens}
+                // aprs={aprs}
+                // tvl={tvl}
+                // myStake={myStake}
+                onClickStake={() => {
+                  setActiveDialog("stake")
+                  setActiveGauge({
+                    address: addresses,
+                    displayName: name,
+                    lpToken: lpToken,
+                    rewardsPid: pid,
+                  })
+                }}
+                onClickClaim={() => {
+                  setActiveDialog("claim")
+                  setActiveGauge({
+                    address: addresses,
+                    displayName: name,
+                    lpToken: lpToken,
+                    rewardsPid: pid,
+                  })
+                }}
+              />
+            </Box>
+          )
+        })}
       </Box>
-
+      {console.log(activeGauge, activeDialog, "active")}
       <StakeDialog
-        farmName={activeGauge?.displayName}
+        name={activeGauge?.displayName}
         open={activeDialog === "stake"}
-        gaugeAddress={activeGauge?.address}
+        address={activeGauge?.address}
+        lptoken={activeGauge?.lpToken}
+        rewardPids={activeGauge?.rewardsPid}
         onClose={() => {
           setActiveDialog(undefined)
           setActiveGauge(undefined)
@@ -219,6 +226,7 @@ export default function Farm(): JSX.Element {
         open={activeDialog === "claim"}
         gaugeAddress={activeGauge?.address}
         displayName={activeGauge?.displayName}
+        rewardPid={activeGauge?.rewardsPid}
         onClose={() => {
           setActiveDialog(undefined)
           setActiveGauge(undefined)
@@ -250,7 +258,7 @@ function FarmListHeader(): JSX.Element {
       </Grid>
       {!isLgDown && (
         <Grid item xs={1.5}>
-          <Typography>GAUGE TVL</Typography>
+          <Typography>FARM TVL</Typography>
         </Grid>
       )}
       {!isLgDown && (

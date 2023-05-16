@@ -22,7 +22,7 @@ export const BTC_POOL_V2_NAME = "BTC V2"
 export const EVMOS_BTC_POOL_NAME = "Evmos BTC"
 export const STABLECOIN_POOL_NAME = "USD"
 export const STABLECOIN_POOL_V2_NAME = "$BULL Boosted USDv2"
-export const BULL_FARM_NAME = "FARM BULL TOKEN"
+export const BULL_FARM_NAME = "$BULL TOKEN"
 export const VETH2_POOL_NAME = "vETH2"
 export const ALETH_POOL_NAME = "alETH"
 export const D4_POOL_NAME = "D4"
@@ -345,14 +345,11 @@ export const STABLECOIN_SWAP_V2_ADDRESSES = buildAddresses({
   [ChainId.GOERLI]: "0xb201A09e4dA328cd8B772195a5B1e1C4bA5B28e9",
   [ChainId.HARDHAT]: "0xbf9fBFf01664500A33080Da5d437028b07DFcC55",
 })
-export const STABLECOIN_FARM_V2_ADDRESSES = buildAddresses({
-  [ChainId.MAINNET]: "0xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7",
-  [ChainId.GOERLI]: "0xb201A09e4dA328cd8B772195a5B1e1C4bA5B28e9",
-})
-export const BULL_FARM_V2_ADDRESSES = buildAddresses({
-  [ChainId.MAINNET]: "0xaCb83E0633d6605c5001e2Ab59EF3C745547C8C7",
-  [ChainId.GOERLI]: "0xb201A09e4dA328cd8B772195a5B1e1C4bA5B28e9",
-})
+export const STABLECOIN_FARM_V2_ADDRESSES =
+  "0xa7CFf9B8f89Fa12F41Ce0563064cafdf243d6E8B"
+
+export const BULL_FARM_V2_ADDRESSES =
+  "0xa7CFf9B8f89Fa12F41Ce0563064cafdf243d6E8B"
 
 export const BTC_SWAP_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0x4f6A43Ad7cba042606dECaCA730d4CE0A57ac62e",
@@ -917,15 +914,7 @@ export const STABLECOIN_SWAP_V2_TOKEN = new Token(
   false,
   true,
 )
-export const BULL_TOKEN = new Token(
-  BULL_ADDRESS,
-  18,
-  "BULL",
-  "BULL",
-  "Bull",
-  false,
-  true,
-)
+export const USDV2_LPTOKEN = STABLECOIN_SWAP_V2_TOKEN_CONTRACT_ADDRESSES
 
 export const WCUSD_SWAP_TOKEN = new Token(
   WCUSD_SWAP_TOKEN_CONTRACT_ADDRESSES,
@@ -1398,6 +1387,15 @@ export const USX = new Token(
   "token-dforce-usd",
   "dForce USD",
 )
+export const BULL_TOKEN = new Token(
+  TBTC_SWAP_TOKEN_V2_CONTRACT_ADDRESSES,
+  18,
+  "BULL",
+  "BULL",
+  "BULL",
+  false,
+  true,
+)
 
 export const FRAX_ARB_USD_POOL_V2_TOKENS = [FRAX, USDC, USDT]
 export const STABLECOIN_POOL_TOKENS = [DAI, USDC, USDT]
@@ -1507,7 +1505,7 @@ export const SBTC = new Token(
 
 export const BTC_POOL_TOKENS = [TBTC, WBTC, RENBTC, SBTC]
 export const BTC_POOL_V2_TOKENS = [WBTC, RENBTC, SBTC]
-export const BULL_TOKENS = [BULL_TOKEN]
+export const BULL_TOKENS = [BULL_ADDRESS]
 
 export const TBTC_POOL_TOKENS = [TBTC_V2, ...BTC_POOL_V2_TOKENS]
 export const TBTC_UNDERLYING_POOL_TOKENS = [TBTC_V2, BTC_SWAP_V2_TOKEN]
@@ -1625,31 +1623,34 @@ export type Pool = {
 export type PoolsMap = {
   [poolName: string]: Pool
 }
-export type FarmsMap = {
-  [poolName: string]: Pool
-}
-export const FARMS_MAP: FarmsMap = {
-  [STABLECOIN_POOL_V2_NAME]: {
+// export type FarmsMap = {
+//   [{
+
+//   }]
+// }
+export const FARMS_MAP = [
+  {
     name: STABLECOIN_POOL_V2_NAME,
-    addresses: STABLECOIN_SWAP_V2_ADDRESSES,
-    lpToken: STABLECOIN_SWAP_V2_TOKEN,
+    addresses: STABLECOIN_FARM_V2_ADDRESSES,
+    lpToken: "0x91A34132F2B6CA6D6f24eAfF62B970bEf1170F64",
     poolTokens: STABLECOIN_POOL_TOKENS,
     isSynthetic: false,
     type: PoolTypes.USD,
     route: "usdv2",
-    rewardPids: buildPids({ [ChainId.MAINNET]: 1, [ChainId.HARDHAT]: 1 }),
+    pid: 1,
   },
-  [BULL_FARM_NAME]: {
+  {
     name: BULL_FARM_NAME,
     addresses: BULL_FARM_V2_ADDRESSES,
-    lpToken: BULL_TOKEN,
+    lpToken: "0xADc97c479C56B0105674d960B528FE8788c99D43",
     poolTokens: BTC_POOL_V2_TOKENS,
     isSynthetic: true,
     type: PoolTypes.BTC,
     route: "bull",
-    rewardPids: buildPids({ [ChainId.MAINNET]: 0, [ChainId.HARDHAT]: 0 }),
+    pid: 0,
   },
-}
+]
+
 export const POOLS_MAP: PoolsMap = {
   // [BTC_POOL_NAME]: {
   //   name: BTC_POOL_NAME,

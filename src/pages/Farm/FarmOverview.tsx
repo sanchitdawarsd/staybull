@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import {
   Button,
   Grid,
@@ -24,12 +25,12 @@ import { useActiveWeb3React } from "../../hooks"
 import { useTranslation } from "react-i18next"
 
 interface FarmOverviewProps {
-  farmName: string
-  aprs?: GaugeApr[]
-  poolTokens?: string[]
-  tvl?: BigNumber
-  myStake: BigNumber
-  gaugeAddress: string
+  name: string
+  // aprs?: GaugeApr[]
+  // poolTokens?: string[]
+  // tvl?: BigNumber
+  // myStake: BigNumber
+  addresses: string
   onClickStake: () => void
   onClickClaim: () => void
 }
@@ -42,13 +43,13 @@ const TokenGroup = styled("div")(() => ({
 }))
 
 export default function FarmOverview({
-  farmName,
-  poolTokens,
-  aprs,
-  tvl,
-  myStake,
+  name,
+  // poolTokens,
+  // aprs,
+  // tvl,
+  // myStake,
   onClickStake,
-  gaugeAddress,
+  addresses,
 }: // onClickClaim,
 FarmOverviewProps): JSX.Element | null {
   const { t } = useTranslation()
@@ -91,7 +92,7 @@ FarmOverviewProps): JSX.Element | null {
   }, [account, chainId, library, amountStakedDeadFusdc])
 
   if (!chainId) return null
-  const isDeadFusdcGauge = gaugeAddress === DEAD_FUSDC_GAUGE_ADDRESS
+  const isDeadFusdcGauge = addresses === DEAD_FUSDC_GAUGE_ADDRESS
   if (isDeadFusdcGauge && amountStakedDeadFusdc.eq(Zero)) return null // don't show old gauge to non-stakers
 
   return (
@@ -114,35 +115,36 @@ FarmOverviewProps): JSX.Element | null {
             <Typography variant="h4">FARM</Typography>
             <Typography variant="h2">
               {isDeadFusdcGauge ? "Outdated " : ""}
-              {farmName}
+              {name}
             </Typography>
             <TokenGroup>
-              {farmName === "SDL/WETH SLP" ? (
-                <>
-                  <TokenIcon symbol="SDL" alt="sdl" />
-                  <TokenIcon symbol="WETH" alt="weth" />
-                </>
-              ) : (
-                poolTokens?.map((tokenAddress) => {
-                  const token = tokens?.[tokenAddress]
-                  if (!token) return <div></div>
-                  return (
-                    <TokenIcon
-                      key={token.name}
-                      symbol={token.symbol}
-                      alt={token.symbol}
-                    />
-                  )
-                })
-              )}
+              {
+                name === "SDL/WETH SLP" ? (
+                  <>
+                    <TokenIcon symbol="SDL" alt="sdl" />
+                    <TokenIcon symbol="WETH" alt="weth" />
+                  </>
+                ) : null
+                // poolTokens?.map((tokenAddress) => {
+                //   const token = tokens?.[tokenAddress]
+                //   if (!token) return <div></div>
+                //   return (
+                //     <TokenIcon
+                //       key={token.name}
+                //       symbol={token.symbol}
+                //       alt={token.symbol}
+                //     />
+                //   )
+                // })
+              }
             </TokenGroup>
           </Grid>
 
           {isLgDown && (
             <Grid item xs={6}>
-              <Typography variant="subtitle1">GAUGE TVL</Typography>
+              <Typography variant="subtitle1">FARM TVL</Typography>
               <Typography variant="subtitle1">
-                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"}
+                {/* {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"} */}
               </Typography>
             </Grid>
           )}
@@ -150,13 +152,13 @@ FarmOverviewProps): JSX.Element | null {
         <Grid item container xs={5} lg={3} flexDirection="column" gap={2}>
           <Grid xs={6} lg={12}>
             {isLgDown && <Typography variant="subtitle1">APR</Typography>}
-            {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />}
+            {/* {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />} */}
           </Grid>
           {isLgDown && (
             <Grid xs={6}>
               <Typography variant="subtitle1">{t("myStaked")} LP</Typography>
               <Typography variant="subtitle1">
-                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
+                {/* {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"} */}
               </Typography>
             </Grid>
           )}
@@ -165,12 +167,12 @@ FarmOverviewProps): JSX.Element | null {
           <React.Fragment>
             <Grid item xs={0} lg={1.5}>
               <Typography variant="subtitle1">
-                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "-"}
+                {/* {tvl ? `$${formatBNToShortString(tvl, 18)}` : "-"} */}
               </Typography>
             </Grid>
             <Grid item xs={1.5}>
               <Typography variant="subtitle1">
-                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "-"}
+                {/* {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "-"} */}
               </Typography>
             </Grid>
           </React.Fragment>
