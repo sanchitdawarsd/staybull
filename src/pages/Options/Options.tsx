@@ -5,7 +5,12 @@ import BullLogo from "../../assets/bullLogo.png"
 import InputField from "./InputField"
 import OBULLogo from "../../assets/oBullLogo.png"
 import React, { useEffect, useState } from "react"
-import { useOptions, useOracle, useUsdc } from "../../hooks/useContract"
+import {
+  useOptions,
+  useOracle,
+  usePaymentToken,
+  useUsdc,
+} from "../../hooks/useContract"
 import UsdcLogo from "../../assets/icons/usdc.svg"
 import { ethers } from "ethers"
 import { useActiveWeb3React } from "../../hooks"
@@ -13,6 +18,7 @@ import { createMultiCallContract, getMulticallProvider } from "../../utils"
 import {
   BULL_ADDRESS,
   OPTIONS_ADDRESS,
+  PAYMENT_CONTRACT_ADDRESSES,
   USDC_CONTRACT_ADDRESSES,
 } from "../../constants"
 import { Erc20 } from "../../../types/ethers-contracts/Erc20"
@@ -52,7 +58,7 @@ const Options = () => {
   }
   const contract = useOracle()
   const optionsContract = useOptions()
-  const usdcContract = useUsdc()
+  const usdcContract = usePaymentToken()
 
   const exercise = async (
     value: any,
@@ -72,7 +78,7 @@ const Options = () => {
             OPTIONS_ADDRESS[chainId!],
             ethers.utils.parseUnits(usdcvalue.toString(), 6),
           )
-          tx1.wait()
+          await tx1?.wait()
         }
         console.log(
           ethers.utils.parseUnits(cvalue.toString(), 18).toString(),
@@ -86,7 +92,7 @@ const Options = () => {
           ethers.utils.parseUnits(usdcvalue.toString(), 6),
           account,
         )
-        tx2?.wait()
+        await tx2?.wait()
       } catch (e) {
         console.log(e)
       }
@@ -110,7 +116,7 @@ const Options = () => {
           ERC20_ABI,
         )
         const usdcContract = createMultiCallContract<Erc20>(
-          USDC_CONTRACT_ADDRESSES[chainId],
+          PAYMENT_CONTRACT_ADDRESSES[chainId],
           ERC20_ABI,
         )
         const bullContract = createMultiCallContract<Erc20>(
@@ -215,7 +221,7 @@ const Options = () => {
             : usdcbalance / 10 ** 6 < usdcvalue
             ? "Not enough usdc balance to convert"
             : usdcallowance / 10 ** 6 < usdcvalue
-            ? "Approve"
+            ? "Approve and Convert"
             : "CONVERT TO BULL"}
         </Button>
       </Box>

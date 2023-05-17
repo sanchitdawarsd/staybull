@@ -11,6 +11,7 @@ import {
   MINICHEF_CONTRACT_ADDRESSES,
   OPTIONS_ADDRESS,
   ORACLE_ADDRESS,
+  PAYMENT_CONTRACT_ADDRESSES,
   RETROACTIVE_VESTING_CONTRACT_ADDRESSES,
   ROOT_GAUGE_FACTORY_CONTRACT_ADDRESSES,
   SDL_TOKEN_ADDRESSES,
@@ -141,10 +142,17 @@ export function useOptions(): Options | null {
   const contractAddress = chainId ? OPTIONS_ADDRESS[chainId] : undefined
   return useContract(contractAddress, OPTIONS_ABI, true) as Options
 }
-export function useUsdc(): Oracle | null {
+export function useUsdc(): Erc20 | null {
   const { chainId } = useActiveWeb3React()
   const contractAddress = chainId ? USDC_CONTRACT_ADDRESSES[chainId] : undefined
-  return useContract(contractAddress, ERC20_ABI, true) as Oracle
+  return useContract(contractAddress, ERC20_ABI, true) as Erc20
+}
+export function usePaymentToken(): Erc20 | null {
+  const { chainId } = useActiveWeb3React()
+  const contractAddress = chainId
+    ? PAYMENT_CONTRACT_ADDRESSES[chainId]
+    : undefined
+  return useContract(contractAddress, ERC20_ABI, true) as Erc20
 }
 
 export function usePoolRegistry(): PoolRegistry | null {
