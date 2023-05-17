@@ -144,7 +144,7 @@ export function useOptions(): Options | null {
 export function useUsdc(): Oracle | null {
   const { chainId } = useActiveWeb3React()
   const contractAddress = chainId ? USDC_CONTRACT_ADDRESSES[chainId] : undefined
-  return useContract(contractAddress, ERC20_ABI, false) as Oracle
+  return useContract(contractAddress, ERC20_ABI, true) as Oracle
 }
 
 export function usePoolRegistry(): PoolRegistry | null {
