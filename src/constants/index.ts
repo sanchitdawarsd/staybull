@@ -346,10 +346,10 @@ export const STABLECOIN_SWAP_V2_ADDRESSES = buildAddresses({
   [ChainId.HARDHAT]: "0xbf9fBFf01664500A33080Da5d437028b07DFcC55",
 })
 export const STABLECOIN_FARM_V2_ADDRESSES =
-  "0xa7CFf9B8f89Fa12F41Ce0563064cafdf243d6E8B"
+  "0xfb839FeFa2dA178c0Ba0840003f9e13fc50e1f5a"
 
 export const BULL_FARM_V2_ADDRESSES =
-  "0xa7CFf9B8f89Fa12F41Ce0563064cafdf243d6E8B"
+  "0xfb839FeFa2dA178c0Ba0840003f9e13fc50e1f5a"
 
 export const BTC_SWAP_ADDRESSES = buildAddresses({
   [ChainId.MAINNET]: "0x4f6A43Ad7cba042606dECaCA730d4CE0A57ac62e",
@@ -1636,7 +1636,7 @@ export const FARMS_MAP = [
     poolTokens: STABLECOIN_POOL_TOKENS,
     isSynthetic: false,
     type: PoolTypes.USD,
-    route: "usdv2",
+    route: "usd",
     pid: 1,
   },
   {

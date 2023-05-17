@@ -26,10 +26,10 @@ import { useTranslation } from "react-i18next"
 
 interface FarmOverviewProps {
   name: string
-  // aprs?: GaugeApr[]
+  aprs?: GaugeApr[]
   // poolTokens?: string[]
-  // tvl?: BigNumber
-  // myStake: BigNumber
+  tvl?: BigNumber
+  myStake: BigNumber
   addresses: string
   onClickStake: () => void
   onClickClaim: () => void
@@ -45,9 +45,9 @@ const TokenGroup = styled("div")(() => ({
 export default function FarmOverview({
   name,
   // poolTokens,
-  // aprs,
-  // tvl,
-  // myStake,
+  aprs,
+  tvl,
+  myStake,
   onClickStake,
   addresses,
 }: // onClickClaim,
@@ -58,6 +58,8 @@ FarmOverviewProps): JSX.Element | null {
   const theme = useTheme()
   const isLgDown = useMediaQuery(theme.breakpoints.down("lg"))
   const userState = useContext(UserStateContext)
+
+  // console.log({ name, tvl, addresses, myStake, aprs })
 
   const amountStakedDeadFusdc =
     userState?.gaugeRewards?.[DEAD_FUSDC_GAUGE_ADDRESS]?.amountStaked || Zero
@@ -144,7 +146,7 @@ FarmOverviewProps): JSX.Element | null {
             <Grid item xs={6}>
               <Typography variant="subtitle1">FARM TVL</Typography>
               <Typography variant="subtitle1">
-                {/* {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"} */}
+                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"}
               </Typography>
             </Grid>
           )}
@@ -152,13 +154,13 @@ FarmOverviewProps): JSX.Element | null {
         <Grid item container xs={5} lg={3} flexDirection="column" gap={2}>
           <Grid xs={6} lg={12}>
             {isLgDown && <Typography variant="subtitle1">APR</Typography>}
-            {/* {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />} */}
+            {<GaugeRewardsDisplay aprs={aprs} />}
           </Grid>
           {isLgDown && (
             <Grid xs={6}>
               <Typography variant="subtitle1">{t("myStaked")} LP</Typography>
               <Typography variant="subtitle1">
-                {/* {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"} */}
+                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "_"}
               </Typography>
             </Grid>
           )}
@@ -167,12 +169,12 @@ FarmOverviewProps): JSX.Element | null {
           <React.Fragment>
             <Grid item xs={0} lg={1.5}>
               <Typography variant="subtitle1">
-                {/* {tvl ? `$${formatBNToShortString(tvl, 18)}` : "-"} */}
+                {tvl ? `$${formatBNToShortString(tvl, 18)}` : "-"}
               </Typography>
             </Grid>
             <Grid item xs={1.5}>
               <Typography variant="subtitle1">
-                {/* {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "-"} */}
+                {myStake?.gt(Zero) ? formatBNToShortString(myStake, 18) : "-"}
               </Typography>
             </Grid>
           </React.Fragment>

@@ -45,10 +45,10 @@ type UserGauge = {
   // boost: BigNumber | null
 }
 
-export default function useUserGauge(): (
+export default function useUserGauge(
   gaugeAddress?: string,
   lpTokenAddress?: string,
-) => UserGauge | null {
+): (gaugeAddress?: string, lpTokenAddress?: string) => UserGauge | null {
   const { account, library, chainId } = useActiveWeb3React()
   const { data: registryAddresses } = useRegistryAddress()
 
@@ -56,6 +56,8 @@ export default function useUserGauge(): (
   const userState = useContext(UserStateContext)
   const tokens = useContext(TokensContext)
 
+  const [stakedBalance, setstakedBalance] = useState()
+  const [walletBalance, setwalletBalance] = useState()
   const [veSdlBalance, setVeSdlBalance] = useState(Zero)
   const [totalVeSdl, setTotalVeSdl] = useState(Zero)
 
@@ -64,6 +66,13 @@ export default function useUserGauge(): (
       if (!account || !chainId || !library) {
         return
       }
+      // console.log(lpTokenAddress, "terimaaki1")
+      // if (lpTokenAddress) {
+      //   console.log(lpTokenAddress, "terimaaki1")
+      //   const lptokencontract = useToken(lpTokenAddress)
+      //   let lpdecimal = lptokencontract?.decimals()
+      //   console.log(lpdecimal, "terimaaki")
+      // }
 
       await retrieveAndSetSDLValues(
         account,
@@ -109,6 +118,13 @@ export default function useUserGauge(): (
         gaugeAddress,
         account,
       )
+
+      //  console.log(gaugeAddress, lpTokenAddress, "hakunna1")
+
+      //const lptokencontract = useToken(lpTokenAddress)
+
+      // const price = lptokencontract?.balanceOf(account)
+      // setwalletBalance(ethers.BigNumber.from(price))
 
       return {
         stake: gaugeContract["deposit(uint256,uint256)"],

@@ -10,7 +10,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { TRANSACTION_TYPES, readableDecimalNumberRegex } from "../../constants"
 import {
   commify,
@@ -32,6 +32,8 @@ import checkAndApproveTokenForTrade from "../../utils/checkAndApproveTokenForTra
 import { updateLastTransactionTimes } from "../../state/application"
 import { useActiveWeb3React } from "../../hooks"
 import useUserGauge from "../../hooks/useUserGauge"
+import { useToken, useUsdc } from "../../hooks/useContract"
+import { letterSpacing } from "@mui/system"
 
 interface StakeDialogProps {
   open: boolean
@@ -54,26 +56,23 @@ export default function StakeDialog({
   onClickClaim,
 }: StakeDialogProps): JSX.Element | null {
   const { chainId, account, library } = useActiveWeb3React()
-  const userGauge = useUserGauge()(address, lptoken)
+  const userGauge = useUserGauge(address, lptoken)(address, lptoken)
   const dispatch = useDispatch()
   const [stakeStatus, setStakeStatus] = useState<"stake" | "unstake">("stake")
   const [amountInput, setAmountInput] = useState<string>(defaultInput)
+
   const { infiniteApproval } = useSelector((state: AppState) => state.user)
   const theme = useTheme()
+  let lptokencontract: Erc20 | null
+  // if (lptoken) {
+  //   lptokencontract = useToken(lptoken)
+  // }
 
   const onClickStake = useCallback(async () => {
     console.log(name, address, lptoken, rewardPids, "hahah")
     const errorMsg = "Unable to stake"
     try {
-      console.log(userGauge)
-      if (
-        !rewardPids ||
-        !chainId ||
-        !lptoken ||
-        !address ||
-        !account ||
-        !library
-      ) {
+      if (!chainId || !lptoken || !address || !account || !library) {
         console.error(
           `${errorMsg}: ${missingKeys({
             userGauge,
@@ -107,7 +106,8 @@ export default function StakeDialog({
         },
         chainId,
       )
-      const txn = await userGauge?.stake(rewardPids, inputBN)
+      console.log(inputBN.toString(), "number")
+      const txn = await userGauge?.stake(rewardPids!, inputBN)
       if (txn !== undefined)
         await enqueuePromiseToast(chainId, txn.wait(), "stake", {
           poolName: name,
@@ -207,10 +207,10 @@ export default function StakeDialog({
                 ),
               )} */}
             </Box>
-            <Box>
+            {/* <Box>
               <Typography>My Boost</Typography>
-              {/* {userGauge.boost ? formatBNToString(userGauge.boost, 18, 2) : "-"} */}
-            </Box>
+              {userGauge.boost ? formatBNToString(userGauge.boost, 18, 2) : "-"}
+            </Box> */}
             <Button
               variant="outlined"
               size="large"
@@ -231,25 +231,30 @@ export default function StakeDialog({
             <Tab value="stake" label="Stake" />
             <Tab value="unstake" label="Unstake" />
           </Tabs>
-          <InputBase
-            autoComplete="off"
-            autoCorrect="off"
-            type="text"
-            placeholder="0.0"
-            spellCheck="false"
-            value={amountInput}
-            inputProps={{
-              style: {
-                textAlign: "end",
-                padding: 0,
-                fontFamily: theme.typography.body1.fontFamily,
-                fontSize: theme.typography.body1.fontSize,
-              },
-            }}
-            onChange={(e) => setAmountInput(e.target.value)}
-            onFocus={(e) => e.target.select()}
-            fullWidth
-          />
+          <Typography variant="subtitle2" sx={{ mr: 1 }}>
+            {"balance"}:
+          </Typography>
+          <Box textAlign="end" flex={1}>
+            <InputBase
+              autoComplete="off"
+              autoCorrect="off"
+              type="text"
+              placeholder="0.0"
+              spellCheck="false"
+              value={amountInput}
+              inputProps={{
+                style: {
+                  textAlign: "end",
+                  padding: 0,
+                  fontFamily: theme.typography.body1.fontFamily,
+                  fontSize: theme.typography.body1.fontSize,
+                },
+              }}
+              onChange={(e) => setAmountInput(e.target.value)}
+              onFocus={(e) => e.target.select()}
+              fullWidth
+            />
+          </Box>
           {/* <TokenInput
             inputValue={amountInput}
             // token={userGauge.lpToken}
