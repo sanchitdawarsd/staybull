@@ -20,7 +20,7 @@ import {
 
 import { BigNumber } from "@ethersproject/bignumber"
 import { ChainId } from "../constants/networks"
-import { ContractTransaction } from "ethers"
+import { ContractTransaction, ethers } from "ethers"
 import { GaugeContext } from "../providers/GaugeProvider"
 import { GaugeUserReward } from "../utils/gauges"
 import { LiquidityGaugeV5 } from "../../types/ethers-contracts/LiquidityGaugeV5"
@@ -38,7 +38,7 @@ type UserGauge = {
   unstake: Masterchef["withdraw(uint256,uint256)"]
   claim: Masterchef["deposit(uint256,uint256)"]
   // lpToken: BasicToken
-  // userWalletLpTokenBalance: BigNumber
+  //userWalletLpTokenBalance: BigNumber
   // userStakedLpTokenBalance: BigNumber
   // hasClaimableRewards: boolean
   // userGaugeRewards: GaugeUserReward | null
@@ -60,15 +60,17 @@ export default function useUserGauge(
   const [walletBalance, setwalletBalance] = useState()
   const [veSdlBalance, setVeSdlBalance] = useState(Zero)
   const [totalVeSdl, setTotalVeSdl] = useState(Zero)
+  const lptokencontract = useToken(lpTokenAddress!)
 
   useEffect(() => {
     const fetchVeSdlBalance = async () => {
       if (!account || !chainId || !library) {
         return
       }
-      // console.log(lpTokenAddress, "terimaaki1")
+
+      //
       // if (lpTokenAddress) {
-      //   console.log(lpTokenAddress, "terimaaki1")
+      //
       //   const lptokencontract = useToken(lpTokenAddress)
       //   let lpdecimal = lptokencontract?.decimals()
       //   console.log(lpdecimal, "terimaaki")
@@ -86,6 +88,13 @@ export default function useUserGauge(
     void fetchVeSdlBalance()
   }, [account, chainId, library])
 
+  const getdata = async () => {
+    const price = await lptokencontract?.balanceOf(account!)
+    // setwalletBalance(price)
+    console.log(price, "heyyy")
+    return price
+  }
+
   return useCallback(
     (gaugeAddress?: string, lpTokenAddress?: string) => {
       const gauge = Object.values(gauges).find(
@@ -93,14 +102,6 @@ export default function useUserGauge(
       )
 
       const lpToken = tokens?.[lpTokenAddress ?? ""]
-      console.log("tokenss", lpToken)
-      if (lpTokenAddress) {
-        // const lptokencontract = useToken(lpTokenAddress.toString())
-        // let lpdecimal = lptokencontract?.decimals()
-        // let lpsymbol = lptokencontract?.symbol()
-        // let lpname = lptokencontract?.name()
-        console.log(lpTokenAddress, "details")
-      }
 
       if (
         !account ||
@@ -118,13 +119,11 @@ export default function useUserGauge(
         gaugeAddress,
         account,
       )
+      let a = getdata()
 
-      //  console.log(gaugeAddress, lpTokenAddress, "hakunna1")
+      console.log(a, "heyyy1")
 
-      //const lptokencontract = useToken(lpTokenAddress)
-
-      // const price = lptokencontract?.balanceOf(account)
-      // setwalletBalance(ethers.BigNumber.from(price))
+      // setwalletBalance(ethers.BigNumber.from(price?.toString()))
 
       return {
         stake: gaugeContract["deposit(uint256,uint256)"],
@@ -132,7 +131,7 @@ export default function useUserGauge(
         claim: gaugeContract["deposit(uint256,uint256)"],
         // hasClaimableRewards: hasSDLRewards || hasExternalRewards,
         // lpToken,
-        // userWalletLpTokenBalance:
+        //userWalletLpTokenBalance: a || Zero,
         //   userState.tokenBalances?.[lpToken.address] || Zero,
         // userStakedLpTokenBalance: userGaugeRewards?.amountStaked || Zero,
         // userGaugeRewards: userGaugeRewards || null,
@@ -145,6 +144,7 @@ export default function useUserGauge(
       gauges,
       library,
       registryAddresses,
+      lptokencontract,
       userState,
       tokens,
       veSdlBalance,

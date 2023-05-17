@@ -205,7 +205,6 @@ export default function Farm(): JSX.Element {
               .mul(rewardBalance[1])
               .mul(100)
               .div(balances[1].mul(appPrice.mul(2)))
-        console.log(value0.toString(), value1.toString(), "heyyy")
 
         const rewardToken = {
           address: "0xADc97c479C56B0105674d960B528FE8788c99D43",
