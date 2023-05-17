@@ -32,8 +32,9 @@ import checkAndApproveTokenForTrade from "../../utils/checkAndApproveTokenForTra
 import { updateLastTransactionTimes } from "../../state/application"
 import { useActiveWeb3React } from "../../hooks"
 import useUserGauge from "../../hooks/useUserGauge"
-import { useToken, useUsdc } from "../../hooks/useContract"
+import { getGaugeContract, useToken, useUsdc } from "../../hooks/useContract"
 import { letterSpacing } from "@mui/system"
+import { Masterchef } from "../../../types/ethers-contracts/Masterchef"
 
 interface StakeDialogProps {
   open: boolean
@@ -60,13 +61,18 @@ export default function StakeDialog({
   const dispatch = useDispatch()
   const [stakeStatus, setStakeStatus] = useState<"stake" | "unstake">("stake")
   const [amountInput, setAmountInput] = useState<string>(defaultInput)
+  const [stakedBalance, setstakedBalance] = useState<any>("")
+  const [walletBalance, setwalletBalance] = useState<any>("")
 
   const { infiniteApproval } = useSelector((state: AppState) => state.user)
   const theme = useTheme()
   let lptokencontract: Erc20 | null
+  let gaugeContract: Masterchef | null
   // if (lptoken) {
-  //   lptokencontract = useToken(lptoken)
-  // }
+  lptokencontract = useToken(lptoken!)
+  if (address) {
+    gaugeContract = getGaugeContract(library!, chainId!, address!, account!)
+  }
 
   const onClickStake = useCallback(async () => {
     console.log(name, address, lptoken, rewardPids, "hahah")
@@ -173,6 +179,21 @@ export default function StakeDialog({
 
   // if (!userGauge) return null
 
+  useEffect(() => {
+    console.log("heyyy3")
+    const getdata = async () => {
+      const price = await lptokencontract?.balanceOf(account!)
+      const userInfos = await Promise.all([
+        gaugeContract?.userInfo(BigNumber.from(rewardPids), account!),
+      ])
+      // // setwalletBalance(price)
+      console.log(userInfos[0]?.amount?.toString(), price?.toString(), "heyyy")
+      setstakedBalance(userInfos[0]?.amount?.toString())
+      setwalletBalance(price?.toString())
+    }
+    void getdata()
+  }, [lptoken, address])
+
   return (
     <Dialog
       open={open}
@@ -231,9 +252,28 @@ export default function StakeDialog({
             <Tab value="stake" label="Stake" />
             <Tab value="unstake" label="Unstake" />
           </Tabs>
-          <Typography variant="subtitle2" sx={{ mr: 1 }}>
-            {"balance"}:
-          </Typography>
+
+          {stakeStatus === "stake" ? (
+            <Button
+              onClick={() =>
+                setAmountInput((walletBalance / 10 ** 18).toString())
+              }
+            >
+              <Typography variant="subtitle2" sx={{ mr: 1 }}>
+                {"Balance"}: {(walletBalance / 10 ** 18).toFixed(4)}
+              </Typography>
+            </Button>
+          ) : (
+            <Button
+              onClick={() =>
+                setAmountInput((stakedBalance / 10 ** 18).toString())
+              }
+            >
+              <Typography variant="subtitle2" sx={{ mr: 1 }}>
+                {"Balance"}: {(stakedBalance / 10 ** 18).toFixed(4)}
+              </Typography>
+            </Button>
+          )}
           <Box textAlign="end" flex={1}>
             <InputBase
               autoComplete="off"
@@ -250,7 +290,9 @@ export default function StakeDialog({
                   fontSize: theme.typography.body1.fontSize,
                 },
               }}
-              onChange={(e) => setAmountInput(e.target.value)}
+              onChange={(e) => {
+                setAmountInput(e.target.value)
+              }}
               onFocus={(e) => e.target.select()}
               fullWidth
             />

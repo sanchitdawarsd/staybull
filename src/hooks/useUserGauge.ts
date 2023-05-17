@@ -56,8 +56,6 @@ export default function useUserGauge(
   const userState = useContext(UserStateContext)
   const tokens = useContext(TokensContext)
 
-  const [stakedBalance, setstakedBalance] = useState()
-  const [walletBalance, setwalletBalance] = useState()
   const [veSdlBalance, setVeSdlBalance] = useState(Zero)
   const [totalVeSdl, setTotalVeSdl] = useState(Zero)
   const lptokencontract = useToken(lpTokenAddress!)
@@ -91,17 +89,17 @@ export default function useUserGauge(
   const getdata = async () => {
     const price = await lptokencontract?.balanceOf(account!)
     // setwalletBalance(price)
-    console.log(price, "heyyy")
+    // console.log(price, "heyyy")
     return price
   }
 
   return useCallback(
     (gaugeAddress?: string, lpTokenAddress?: string) => {
-      const gauge = Object.values(gauges).find(
-        ({ address }) => address === gaugeAddress,
-      )
+      // const gauge = Object.values(gauges).find(
+      //   ({ address }) => address === gaugeAddress,
+      // )
 
-      const lpToken = tokens?.[lpTokenAddress ?? ""]
+      // const lpToken = tokens?.[lpTokenAddress ?? ""]
 
       if (
         !account ||
@@ -119,9 +117,10 @@ export default function useUserGauge(
         gaugeAddress,
         account,
       )
-      let a = getdata()
 
-      console.log(a, "heyyy1")
+      // let b = getdata()
+
+      // console.log(b, "heyyy1")
 
       // setwalletBalance(ethers.BigNumber.from(price?.toString()))
 
