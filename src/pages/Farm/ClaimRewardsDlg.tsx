@@ -23,6 +23,7 @@ import useUserGauge from "../../hooks/useUserGauge"
 type Props = {
   open: boolean
   gaugeAddress?: string
+  lptoken?: string
   displayName?: string
   onClose: () => void
   rewardPid: number | undefined
@@ -33,18 +34,22 @@ export default function ClaimRewardsDlg({
   onClose,
   gaugeAddress,
   displayName,
+  lptoken,
   rewardPid,
 }: Props): JSX.Element {
   const { chainId } = useActiveWeb3React()
-  const userGauge = useUserGauge()(gaugeAddress)
+  const userGauge = useUserGauge(gaugeAddress, lptoken)(gaugeAddress, lptoken)
   const dispatch = useDispatch()
 
   const onClickClaim = useCallback(async () => {
+    console.log("heyyy")
     if (!chainId) {
       enqueueToast("error", "Unable to claim reward")
       return
     }
+    console.log("heyyy2")
     const txns = await userGauge?.claim(BigNumber.from(rewardPid), 0)
+    console.log("heyyy3")
     if (txns !== undefined)
       await enqueuePromiseToast(chainId, txns.wait(), "claim", {
         poolName: displayName,
@@ -54,7 +59,7 @@ export default function ClaimRewardsDlg({
         [TRANSACTION_TYPES.STAKE_OR_CLAIM]: Date.now(),
       }),
     )
-  }, [chainId, userGauge, dispatch, displayName])
+  }, [chainId, userGauge, rewardPid, gaugeAddress, dispatch, displayName])
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -65,7 +70,7 @@ export default function ClaimRewardsDlg({
           </Typography>
           <Typography>Stake your LP token and collect incentives.</Typography>
           <Box>
-            <Typography mt={2}>Rewards:</Typography>
+            {/* <Typography mt={2}>Rewards:</Typography> */}
             {/* <UserRewards userGaugeRewards={userGauge?.userGaugeRewards} /> */}
           </Box>
           <Button

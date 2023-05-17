@@ -62,6 +62,7 @@ export default function StakeDialog({
   const [stakeStatus, setStakeStatus] = useState<"stake" | "unstake">("stake")
   const [amountInput, setAmountInput] = useState<string>(defaultInput)
   const [stakedBalance, setstakedBalance] = useState<any>("")
+  const [pendingRewardsBalance, setpendingRewardsBalance] = useState<any>("")
   const [walletBalance, setwalletBalance] = useState<any>("")
 
   const { infiniteApproval } = useSelector((state: AppState) => state.user)
@@ -180,15 +181,18 @@ export default function StakeDialog({
   // if (!userGauge) return null
 
   useEffect(() => {
-    console.log("heyyy3")
+    //console.log("heyyy3")
     const getdata = async () => {
       const price = await lptokencontract?.balanceOf(account!)
       const userInfos = await Promise.all([
         gaugeContract?.userInfo(BigNumber.from(rewardPids), account!),
       ])
-      // // setwalletBalance(price)
-      console.log(userInfos[0]?.amount?.toString(), price?.toString(), "heyyy")
+      const pendingRewards = await Promise.all([
+        gaugeContract?.pendingStaybull(BigNumber.from(rewardPids), account!),
+      ])
+
       setstakedBalance(userInfos[0]?.amount?.toString())
+      setpendingRewardsBalance(pendingRewards?.toString())
       setwalletBalance(price?.toString())
     }
     void getdata()
@@ -219,14 +223,9 @@ export default function StakeDialog({
             alignItems="center"
           >
             <Box>
-              <Typography>LP Staked</Typography>
-              {/* {commify(
-                formatBNToString(
-                  userGauge.userStakedLpTokenBalance,
-                  userGauge.lpToken.decimals,
-                  4,
-                ),
-              )} */}
+              <Typography>
+                Rewards: {(pendingRewardsBalance / 10 ** 18).toFixed(4)} $oBULL
+              </Typography>
             </Box>
             {/* <Box>
               <Typography>My Boost</Typography>

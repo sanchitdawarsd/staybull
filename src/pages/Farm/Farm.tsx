@@ -357,6 +357,7 @@ export default function Farm(): JSX.Element {
       <ClaimRewardsDlg
         open={activeDialog === "claim"}
         gaugeAddress={activeGauge?.address}
+        lptoken={activeGauge?.lpToken}
         displayName={activeGauge?.displayName}
         rewardPid={activeGauge?.rewardsPid}
         onClose={() => {
