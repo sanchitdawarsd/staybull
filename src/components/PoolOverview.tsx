@@ -207,14 +207,14 @@ export default function PoolOverview({
           )}
         </StyledGrid>
         <StyledGrid item xs={6} lg={2.5} disabled={disableText}>
-          {formattedData.apy && (
+          {/* {formattedData.apy && (
             <div>
               <Typography component="span" variant="caption">
                 {`${t("apy")}`}:{" "}
               </Typography>
               <Typography component="span">{formattedData.apy}</Typography>
             </div>
-          )}
+          )} */}
           {minichefSDLInfo && (
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography variant="subtitle1" mr={1} color="secondary">

@@ -13,7 +13,7 @@ export default function VeSDLWrongNetworkModal(): JSX.Element {
   const { t } = useTranslation()
   const handleConnectMainnet = () => {
     void library?.send("wallet_switchEthereumChain", [
-      { chainId: "0x1" },
+      { chainId: "0xa4b1" },
       account,
     ])
   }

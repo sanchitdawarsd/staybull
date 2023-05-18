@@ -17,7 +17,6 @@ import useGaugeTVL from "../hooks/useGaugeTVL"
 import { useSelector } from "react-redux"
 
 type MinAndMax = {
-  min: BigNumber
   max: BigNumber
 }
 type AmountReward = {

@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import {
   BRIDGE_CONTRACT_ADDRESSES,
   BTC_POOL_NAME,
@@ -10,6 +11,7 @@ import {
   MINICHEF_CONTRACT_ADDRESSES,
   OPTIONS_ADDRESS,
   ORACLE_ADDRESS,
+  PAYMENT_CONTRACT_ADDRESSES,
   RETROACTIVE_VESTING_CONTRACT_ADDRESSES,
   ROOT_GAUGE_FACTORY_CONTRACT_ADDRESSES,
   SDL_TOKEN_ADDRESSES,
@@ -85,6 +87,9 @@ import { formatBytes32String } from "@ethersproject/strings"
 import { useActiveWeb3React } from "./index"
 import { Oracle } from "../../types/ethers-contracts/Oracle"
 import { Options } from "../../types/ethers-contracts/Options"
+import MASTERCHEF_ABI from "../constants/abis/masterchef.json"
+import { Masterchef } from "../../types/ethers-contracts/Masterchef"
+import { Erc20 } from "../../types/ethers-contracts/Erc20"
 
 export const POOL_REGISTRY_NAME = "PoolRegistry"
 export const CHILD_GAUGE_FACTORY_NAME = "ChildGaugeFactory"
@@ -129,15 +134,25 @@ export function useOracle(): Oracle | null {
   const contractAddress = chainId ? ORACLE_ADDRESS[chainId] : undefined
   return useContract(contractAddress, ORACLE_ABI, false) as Oracle
 }
+export function useToken(contractAddress: string): Erc20 | null {
+  return useContract(contractAddress, ERC20_ABI, false) as Erc20
+}
 export function useOptions(): Options | null {
   const { chainId } = useActiveWeb3React()
   const contractAddress = chainId ? OPTIONS_ADDRESS[chainId] : undefined
   return useContract(contractAddress, OPTIONS_ABI, true) as Options
 }
-export function useUsdc(): Oracle | null {
+export function useUsdc(): Erc20 | null {
   const { chainId } = useActiveWeb3React()
   const contractAddress = chainId ? USDC_CONTRACT_ADDRESSES[chainId] : undefined
-  return useContract(contractAddress, ERC20_ABI, false) as Oracle
+  return useContract(contractAddress, ERC20_ABI, true) as Erc20
+}
+export function usePaymentToken(): Erc20 | null {
+  const { chainId } = useActiveWeb3React()
+  const contractAddress = chainId
+    ? PAYMENT_CONTRACT_ADDRESSES[chainId]
+    : undefined
+  return useContract(contractAddress, ERC20_ABI, true) as Erc20
 }
 
 export function usePoolRegistry(): PoolRegistry | null {
@@ -308,6 +323,12 @@ export function useTokenContract(
   const tokenAddress = chainId ? t.addresses[chainId] : undefined
   return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
 }
+export function useErc20Contract(
+  address: string,
+  withSignerIfPossible?: boolean,
+): Contract | null {
+  return useContract(address, ERC20_ABI, withSignerIfPossible)
+}
 
 export function useSwapContract<T extends string>(
   poolName?: T,
@@ -432,17 +453,12 @@ export const getGaugeContract = (
   chainId: ChainId,
   address: string,
   account: string,
-): LiquidityGaugeV5 | ChildGauge => {
+): Masterchef => {
   if (isMainnet(chainId)) {
-    return getContract(
-      address,
-      LIQUIDITY_V5_GAUGE_ABI,
-      library,
-      account,
-    ) as LiquidityGaugeV5
+    return getContract(address, MASTERCHEF_ABI, library, account) as Masterchef
   }
 
-  return getContract(address, CHILD_GAUGE_ABI, library, account) as ChildGauge
+  return getContract(address, MASTERCHEF_ABI, library, account) as Masterchef
 }
 
 export const getGaugeControllerContract = (
@@ -526,6 +542,6 @@ export const getRootGaugeFactory = (
 
 export const isMainnet = (chainId?: ChainId): boolean => {
   return (
-    !!chainId && (chainId === ChainId.GOERLI || chainId === ChainId.MAINNET)
+    !!chainId && (chainId === ChainId.ARBITRUM || chainId === ChainId.GOERLI)
   )
 }

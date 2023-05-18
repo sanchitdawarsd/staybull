@@ -1,25 +1,24 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable */
 import { Box, Button, Container, Typography } from "@mui/material"
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 import BullLogo from "../../assets/bullLogo.png"
 import InputField from "./InputField"
 import OBULLogo from "../../assets/oBullLogo.png"
 import React, { useEffect, useState } from "react"
-import { useOptions, useOracle, useUsdc } from "../../hooks/useContract"
-import UsdcLogo from "../../assets/icons/usdc.svg"
+import { useOptions, useOracle, usePaymentToken } from "../../hooks/useContract"
+import ethLogo from "../../assets/icons/eth.svg"
 import { ethers } from "ethers"
 import { useActiveWeb3React } from "../../hooks"
 import { createMultiCallContract, getMulticallProvider } from "../../utils"
 import {
   BULL_ADDRESS,
   OPTIONS_ADDRESS,
-  USDC_CONTRACT_ADDRESSES,
+  PAYMENT_CONTRACT_ADDRESSES,
 } from "../../constants"
 import { Erc20 } from "../../../types/ethers-contracts/Erc20"
 import ERC20_ABI from "../../constants/abis/erc20.json"
+import { enqueuePromiseToast } from "../../components/Toastify"
+import { chain } from "lodash"
 
 const Options = () => {
   const [price, setPrice] = useState<any>()
@@ -38,14 +37,14 @@ const Options = () => {
     if (Number(e) <= cap) {
       setvalue(e)
       if (e) {
-        setusdcvalue((parseInt(e) * price) / 10 ** 6)
+        setusdcvalue(Math.ceil((parseInt(e) * price) / 10 ** 18))
       } else {
         setusdcvalue(0)
       }
     } else {
       setvalue(cap.toString())
       if (e) {
-        setusdcvalue((parseInt(cap.toString()) * price) / 10 ** 6)
+        setusdcvalue(Math.ceil(parseInt(cap.toString()) * price) / 10 ** 18)
       } else {
         setusdcvalue(0)
       }
@@ -55,19 +54,44 @@ const Options = () => {
   }
   const contract = useOracle()
   const optionsContract = useOptions()
-  const usdcContract = useUsdc()
+  const wethContract = usePaymentToken()
 
-  const exercise = async (value: any, usdcvalue: any): Promise<void> => {
-    if (account) {
+  const exercise = async (
+    value: any,
+    usdcvalue: any,
+    usdcbalance: any,
+    usdcallowance: any,
+  ): Promise<void> => {
+    if (account && !(usdcbalance < usdcvalue)) {
       console.log(value, usdcvalue)
+      const cvalue = parseInt(value)
+      const cusdcvalue = parseInt(usdcvalue)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       console.log(ethers.utils.parseUnits(value, 18).toString())
       try {
-        await optionsContract?.["exercise(uint256,uint256,address)"](
-          ethers.utils.parseUnits(value.toString(), 18),
-          ethers.utils.parseUnits(usdcvalue.toString(), 6),
+        if (usdcallowance < usdcvalue) {
+          const tx1 = await wethContract?.["approve(address,uint256)"](
+            OPTIONS_ADDRESS[chainId!],
+            ethers.utils.parseUnits(usdcvalue.toString(), 18),
+          )
+          await enqueuePromiseToast(chainId!, tx1?.wait()!, "tokenApproval", {
+            tokenName: "USDC",
+          })
+          //await tx1?.wait()
+        }
+        console.log(
+          ethers.utils.parseUnits(cvalue.toString(), 18).toString(),
+          ethers.utils.parseUnits(cusdcvalue.toString(), 18).toString(),
+          "price",
+        )
+        const tx2 = await optionsContract?.[
+          "exercise(uint256,uint256,address)"
+        ](
+          ethers.utils.parseUnits(cvalue.toString(), 18),
+          ethers.utils.parseUnits(usdcvalue.toString(), 18),
           account,
         )
+        await enqueuePromiseToast(chainId!, tx2?.wait()!, "swap")
       } catch (e) {
         console.log(e)
       }
@@ -78,20 +102,20 @@ const Options = () => {
     const getdata = async () => {
       if (contract) {
         const price = await contract.estimateAmountOut(
-          "0x1bAAED97039B00e62183aA70642F646124b6b001",
+          BULL_ADDRESS[chainId!],
           ethers.BigNumber.from("1000000000000000000"),
           10,
         )
         setPrice(price)
       }
-      if (usdcContract && library && chainId && account) {
+      if (wethContract && library && chainId && account) {
         const ethCallProvider = await getMulticallProvider(library, chainId)
         const tokenContract = createMultiCallContract<Erc20>(
           OPTIONS_ADDRESS[chainId],
           ERC20_ABI,
         )
-        const usdcContract = createMultiCallContract<Erc20>(
-          USDC_CONTRACT_ADDRESSES[chainId],
+        const wethContract = createMultiCallContract<Erc20>(
+          PAYMENT_CONTRACT_ADDRESSES[chainId],
           ERC20_ABI,
         )
         const bullContract = createMultiCallContract<Erc20>(
@@ -100,15 +124,15 @@ const Options = () => {
         )
         const a = await ethCallProvider.tryAll([
           tokenContract.balanceOf(account),
-          usdcContract.balanceOf(account),
-          usdcContract.allowance(account, OPTIONS_ADDRESS[chainId]),
+          wethContract.balanceOf(account),
+          wethContract.allowance(account, OPTIONS_ADDRESS[chainId]),
           bullContract.balanceOf(account),
         ])
 
-        setobullbalance(a[0]?.toString())
-        setusdcbalance(a[1]?.toString())
-        setusdcallowance(a[2]?.toString())
-        setbullbalance(a[3]?.toString())
+        setobullbalance(a[0])
+        setusdcbalance(a[1])
+        setusdcallowance(a[2])
+        setbullbalance(a[3])
         console.log(
           usdcallowance,
           a[0]?.toString(),
@@ -119,7 +143,7 @@ const Options = () => {
       }
     }
     void getdata()
-  }, [])
+  }, [account, setusdcallowance])
 
   return (
     <Container maxWidth="md" sx={{ pb: 16 }}>
@@ -134,7 +158,7 @@ const Options = () => {
       </Typography>
       <Typography variant="body1" textAlign={"center"} mt={2} fontSize={14}>
         oBULL gives its holder the right to purchase BULL at a discount price.
-        Pay USDC to convert your oBULL to BULL.
+        Pay WETH to convert your oBULL to BULL.
       </Typography>
 
       <Box
@@ -146,27 +170,27 @@ const Options = () => {
         }}
       >
         <Typography variant="body1" mt={1} fontSize={12}>
-          $oBULL Price: ${(price / 10 ** 6).toFixed(15)} || $BULL Price $
-          {((price * 2) / 10 ** 6).toFixed(15)} || Discount: 50%
+          $oBULL Price: {(price / 10 ** 18).toFixed(15)} $WETH || $BULL Price
+          {((price * 2) / 10 ** 18).toFixed(15)} $WETH || Discount: 50%
         </Typography>
         <div style={{ margin: "auto", textAlign: "center" }}>
           <InputField
-            balance={ethers.BigNumber.from(obullbalance / 10 ** 18)}
+            balance={obullbalance / 10 ** 18}
             name={"oBull"}
             logoUrl={OBULLogo}
             onInput={handleInputChange}
             value={value}
           />
           <InputField
-            balance={ethers.BigNumber.from(usdcbalance / 10 ** 6)}
-            name={"USDC"}
-            logoUrl={UsdcLogo}
+            balance={usdcbalance / 10 ** 18}
+            name={"WETH"}
+            logoUrl={ethLogo}
             onInput={handleInputChange}
             value={usdcvalue}
           />
           <ArrowDownwardIcon sx={{ marginTop: 2 }} />
           <InputField
-            balance={ethers.BigNumber.from(bullbalance / 10 ** 18)}
+            balance={bullbalance / 10 ** 18}
             name={"Bull"}
             logoUrl={BullLogo}
             onInput={handleInputChange}
@@ -182,12 +206,21 @@ const Options = () => {
             marginTop: 14,
             borderRadius: 0,
           }}
-          onClick={() => exercise(value, usdcvalue)}
+          onClick={() =>
+            exercise(
+              value,
+              usdcvalue,
+              usdcbalance / 10 ** 18,
+              usdcallowance / 10 ** 18,
+            )
+          }
         >
           {usdcvalue == 0
             ? "Enter amount"
-            : usdcallowance / 10 ** 6 < usdcvalue
-            ? "Approve"
+            : usdcbalance / 10 ** 18 < usdcvalue
+            ? "Not enough weth balance to convert"
+            : usdcallowance / 10 ** 18 < usdcvalue
+            ? "Approve and Convert"
             : "CONVERT TO BULL"}
         </Button>
       </Box>

@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import {
   AppBar,
   Box,
@@ -22,7 +23,7 @@ import { AppState } from "../state"
 import BullIcon from "../assets/bullLogo.png"
 import BullLogo from "./BullLogo"
 import SiteSettingsMenu from "./SiteSettingsMenu"
-import TokenClaimDialog from "./TokenClaimDialog"
+// import TokenClaimDialog from "./TokenClaimDialog"
 import Web3Status from "./Web3Status"
 import { areGaugesActive } from "../utils/gauges"
 //import { formatBNToShortString } from "../utils"
@@ -156,10 +157,10 @@ function TopMenu(): ReactElement {
           close={() => setAnchorEl(null)}
         />
 
-        <TokenClaimDialog
+        {/* <TokenClaimDialog
           open={currentModal === "tokenClaim"}
           onClose={(): void => setCurrentModal(null)}
-        />
+        /> */}
         <Drawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
@@ -269,7 +270,8 @@ function SDLPrice({ sdlPrice }: SDLPriceProps): ReactElement | null {
         display: { xs: "none", md: "inline-flex" },
       }}
     >
-      {`$${sdlPrice.toFixed(2)}`}
+      {"HOME"}
+      {/* {`$${sdlPrice.toFixed(2)}`} */}
     </Button>
   )
 }

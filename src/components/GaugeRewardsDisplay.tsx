@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material"
 import React, { ReactElement } from "react"
-import { commify, formatBNToPercentString, formatBNToString } from "../utils"
+import { commify, formatBNToString } from "../utils"
 
 import { GaugeApr } from "../providers/AprsProvider"
 
@@ -16,7 +16,7 @@ export default function GaugeRewardsDisplay({
         if (!aprData.rewardToken) return null
         const { symbol, address, decimals } = aprData.rewardToken
         if (aprData.amountPerDay) {
-          const { min, max } = aprData.amountPerDay
+          const { max } = aprData.amountPerDay
           if (max.isZero()) return null
           return (
             <Box key={address}>
@@ -24,27 +24,19 @@ export default function GaugeRewardsDisplay({
                 {symbol}/24h:
               </Typography>
               <Typography component="span" variant="subtitle1">
-                {`${commify(formatBNToString(min, decimals, 0))}-${commify(
-                  formatBNToString(max, decimals, 0),
-                )}`}
+                {`${commify(formatBNToString(max, decimals, 0))}`}
               </Typography>
             </Box>
           )
         } else if (aprData.apr) {
-          const { min, max } = aprData.apr
+          const { max } = aprData.apr
           if (max.isZero()) return null
           return (
             <Box key={address}>
               <Typography component="p" variant="subtitle1" color="secondary">
-                {symbol} apr:
+                {/* {symbol} apr: */}
               </Typography>
-              <Typography component="span">
-                {`${formatBNToPercentString(
-                  min,
-                  decimals,
-                  2,
-                )}-${formatBNToPercentString(max, decimals, 2)}`}
-              </Typography>
+              <Typography component="span">{max.toString()} %</Typography>
             </Box>
           )
         }

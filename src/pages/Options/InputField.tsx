@@ -1,9 +1,9 @@
 import { Box, TextField, Typography } from "@mui/material"
-import { BigNumber } from "ethers"
+//import { BigNumber } from "ethers"
 import React from "react"
 
 type myProps = {
-  balance: BigNumber
+  balance: number
   name: string
   logoUrl: string
   onInput: (e: string) => void

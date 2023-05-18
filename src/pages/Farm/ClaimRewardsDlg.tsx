@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import {
   Box,
   Button,
@@ -22,8 +23,10 @@ import useUserGauge from "../../hooks/useUserGauge"
 type Props = {
   open: boolean
   gaugeAddress?: string
+  lptoken?: string
   displayName?: string
   onClose: () => void
+  rewardPid: number | undefined
 }
 
 export default function ClaimRewardsDlg({
@@ -31,29 +34,32 @@ export default function ClaimRewardsDlg({
   onClose,
   gaugeAddress,
   displayName,
+  lptoken,
+  rewardPid,
 }: Props): JSX.Element {
   const { chainId } = useActiveWeb3React()
-  const userGauge = useUserGauge()(gaugeAddress)
+  const userGauge = useUserGauge(gaugeAddress, lptoken)(gaugeAddress, lptoken)
   const dispatch = useDispatch()
 
   const onClickClaim = useCallback(async () => {
+    console.log("heyyy")
     if (!chainId) {
       enqueueToast("error", "Unable to claim reward")
       return
     }
-    const txns = await userGauge?.claim()
-    await enqueuePromiseToast(
-      chainId,
-      Promise.all((txns || []).map((txn) => txn.wait())),
-      "claim",
-      { poolName: displayName },
-    )
+    console.log("heyyy2")
+    const txns = await userGauge?.claim(BigNumber.from(rewardPid), 0)
+    console.log("heyyy3")
+    if (txns !== undefined)
+      await enqueuePromiseToast(chainId, txns.wait(), "claim", {
+        poolName: displayName,
+      })
     dispatch(
       updateLastTransactionTimes({
         [TRANSACTION_TYPES.STAKE_OR_CLAIM]: Date.now(),
       }),
     )
-  }, [chainId, userGauge, dispatch, displayName])
+  }, [chainId, userGauge, rewardPid, gaugeAddress, dispatch, displayName])
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -64,14 +70,14 @@ export default function ClaimRewardsDlg({
           </Typography>
           <Typography>Stake your LP token and collect incentives.</Typography>
           <Box>
-            <Typography mt={2}>Rewards:</Typography>
-            <UserRewards userGaugeRewards={userGauge?.userGaugeRewards} />
+            {/* <Typography mt={2}>Rewards:</Typography> */}
+            {/* <UserRewards userGaugeRewards={userGauge?.userGaugeRewards} /> */}
           </Box>
           <Button
             variant="contained"
             size="large"
             onClick={() => void onClickClaim()}
-            disabled={!userGauge?.hasClaimableRewards}
+            // disabled={!userGauge?.hasClaimableRewards}
           >
             Claim Rewards
           </Button>

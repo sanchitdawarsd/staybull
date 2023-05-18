@@ -1,13 +1,16 @@
+/* eslint-disable*/
 import {
   Box,
   Button,
   DialogContent,
+  InputBase,
   Stack,
   Tab,
   Tabs,
   Typography,
+  useTheme,
 } from "@mui/material"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { TRANSACTION_TYPES, readableDecimalNumberRegex } from "../../constants"
 import {
   commify,
@@ -20,7 +23,7 @@ import { formatUnits, parseUnits } from "ethers/lib/utils"
 import { useDispatch, useSelector } from "react-redux"
 
 import { AppState } from "../../state"
-import { BigNumber } from "ethers"
+import { BigNumber, ethers } from "ethers"
 import Dialog from "../../components/Dialog"
 import ERC20_ABI from "../../constants/abis/erc20.json"
 import { Erc20 } from "../../../types/ethers-contracts/Erc20"
@@ -29,39 +32,59 @@ import checkAndApproveTokenForTrade from "../../utils/checkAndApproveTokenForTra
 import { updateLastTransactionTimes } from "../../state/application"
 import { useActiveWeb3React } from "../../hooks"
 import useUserGauge from "../../hooks/useUserGauge"
+import { getGaugeContract, useToken, useUsdc } from "../../hooks/useContract"
+import { letterSpacing } from "@mui/system"
+import { Masterchef } from "../../../types/ethers-contracts/Masterchef"
 
 interface StakeDialogProps {
   open: boolean
   onClose: () => void
   onClickClaim: () => void
-  farmName?: string
-  gaugeAddress?: string
+  name?: string
+  address?: string
+  lptoken?: string
+  rewardPids?: number
 }
 
 const defaultInput = "0.0"
 export default function StakeDialog({
   open,
-  farmName,
-  gaugeAddress,
+  name,
+  address,
+  lptoken,
+  rewardPids,
   onClose,
   onClickClaim,
 }: StakeDialogProps): JSX.Element | null {
   const { chainId, account, library } = useActiveWeb3React()
-  const userGauge = useUserGauge()(gaugeAddress)
+  const userGauge = useUserGauge(address, lptoken)(address, lptoken)
   const dispatch = useDispatch()
   const [stakeStatus, setStakeStatus] = useState<"stake" | "unstake">("stake")
   const [amountInput, setAmountInput] = useState<string>(defaultInput)
+  const [stakedBalance, setstakedBalance] = useState<any>("")
+  const [pendingRewardsBalance, setpendingRewardsBalance] = useState<any>("")
+  const [walletBalance, setwalletBalance] = useState<any>("")
+
   const { infiniteApproval } = useSelector((state: AppState) => state.user)
+  const theme = useTheme()
+  let lptokencontract: Erc20 | null
+  let gaugeContract: Masterchef | null
+  // if (lptoken) {
+  lptokencontract = useToken(lptoken!)
+  if (address) {
+    gaugeContract = getGaugeContract(library!, chainId!, address!, account!)
+  }
 
   const onClickStake = useCallback(async () => {
+    console.log(name, address, lptoken, rewardPids, "hahah")
     const errorMsg = "Unable to stake"
     try {
-      if (!userGauge || !chainId || !gaugeAddress || !account || !library) {
+      if (!chainId || !lptoken || !address || !account || !library) {
         console.error(
           `${errorMsg}: ${missingKeys({
             userGauge,
             chainId,
-            gaugeAddress,
+            address,
             account,
             library,
           }).join(", ")} missing`,
@@ -71,14 +94,14 @@ export default function StakeDialog({
       }
       const inputBN = parseUnits(amountInput)
       const lpTokenContract = getContract(
-        userGauge.lpToken.address,
+        lptoken,
         ERC20_ABI,
         library,
         account,
       ) as Erc20
       await checkAndApproveTokenForTrade(
         lpTokenContract,
-        gaugeAddress,
+        address,
         account,
         inputBN,
         infiniteApproval,
@@ -90,10 +113,12 @@ export default function StakeDialog({
         },
         chainId,
       )
-      const txn = await userGauge?.stake(inputBN)
-      await enqueuePromiseToast(chainId, txn.wait(), "stake", {
-        poolName: farmName,
-      })
+      console.log(inputBN.toString(), "number")
+      const txn = await userGauge?.stake(rewardPids!, inputBN)
+      if (txn !== undefined)
+        await enqueuePromiseToast(chainId, txn.wait(), "stake", {
+          poolName: name,
+        })
       dispatch(
         updateLastTransactionTimes({
           [TRANSACTION_TYPES.STAKE_OR_CLAIM]: Date.now(),
@@ -107,19 +132,19 @@ export default function StakeDialog({
   }, [
     userGauge,
     chainId,
-    gaugeAddress,
+    address,
     account,
     library,
     amountInput,
     infiniteApproval,
-    farmName,
+    name,
     dispatch,
   ])
 
   const onClickUnstake = useCallback(async () => {
     const errorMsg = "Unable to unstake"
     try {
-      if (!userGauge || !chainId) {
+      if (!chainId) {
         console.error(
           `${errorMsg}: ${missingKeys({
             userGauge,
@@ -130,10 +155,14 @@ export default function StakeDialog({
         return
       }
       const inputBN = parseUnits(amountInput)
-      const txn = await userGauge?.unstake(inputBN)
-      await enqueuePromiseToast(chainId, txn.wait(), "unstake", {
-        poolName: farmName,
-      })
+      const txn = await userGauge?.unstake(
+        ethers.BigNumber.from(rewardPids),
+        inputBN,
+      )
+      if (txn !== undefined)
+        await enqueuePromiseToast(chainId, txn.wait(), "unstake", {
+          poolName: name,
+        })
       dispatch(
         updateLastTransactionTimes({
           [TRANSACTION_TYPES.STAKE_OR_CLAIM]: Date.now(),
@@ -144,12 +173,30 @@ export default function StakeDialog({
       console.error(e)
       enqueueToast("error", errorMsg)
     }
-  }, [userGauge, amountInput, chainId, farmName, dispatch])
+  }, [amountInput, chainId, name, dispatch])
 
   const isInputValid =
     readableDecimalNumberRegex.test(amountInput) && parseFloat(amountInput) > 0
 
-  if (!userGauge) return null
+  // if (!userGauge) return null
+
+  useEffect(() => {
+    //console.log("heyyy3")
+    const getdata = async () => {
+      const price = await lptokencontract?.balanceOf(account!)
+      const userInfos = await Promise.all([
+        gaugeContract?.userInfo(BigNumber.from(rewardPids), account!),
+      ])
+      const pendingRewards = await Promise.all([
+        gaugeContract?.pendingStaybull(BigNumber.from(rewardPids), account!),
+      ])
+
+      setstakedBalance(userInfos[0]?.amount?.toString())
+      setpendingRewardsBalance(pendingRewards?.toString())
+      setwalletBalance(price?.toString())
+    }
+    void getdata()
+  }, [lptoken, address])
 
   return (
     <Dialog
@@ -165,10 +212,10 @@ export default function StakeDialog({
       <DialogContent sx={{ mt: 3 }}>
         <Stack spacing={3}>
           <Typography variant="h1" textAlign="center">
-            {farmName}
+            {name}
           </Typography>
           <Typography>
-            Stake your LP token and collect SDL incentives.
+            Stake your LP token and collect $oBull incentives.
           </Typography>
           <Stack
             direction="row"
@@ -176,24 +223,19 @@ export default function StakeDialog({
             alignItems="center"
           >
             <Box>
-              <Typography>LP Staked</Typography>
-              {commify(
-                formatBNToString(
-                  userGauge.userStakedLpTokenBalance,
-                  userGauge.lpToken.decimals,
-                  4,
-                ),
-              )}
+              <Typography>
+                Rewards: {(pendingRewardsBalance / 10 ** 18).toFixed(4)} $oBULL
+              </Typography>
             </Box>
-            <Box>
+            {/* <Box>
               <Typography>My Boost</Typography>
               {userGauge.boost ? formatBNToString(userGauge.boost, 18, 2) : "-"}
-            </Box>
+            </Box> */}
             <Button
               variant="outlined"
               size="large"
               onClick={onClickClaim}
-              disabled={!userGauge.hasClaimableRewards}
+              // disabled={!userGauge.hasClaimableRewards}
             >
               Claim Rewards
             </Button>
@@ -209,18 +251,63 @@ export default function StakeDialog({
             <Tab value="stake" label="Stake" />
             <Tab value="unstake" label="Unstake" />
           </Tabs>
-          <TokenInput
+
+          {stakeStatus === "stake" ? (
+            <Button
+              onClick={() =>
+                setAmountInput((walletBalance / 10 ** 18).toString())
+              }
+            >
+              <Typography variant="subtitle2" sx={{ mr: 1 }}>
+                {"Balance"}: {(walletBalance / 10 ** 18).toFixed(4)}
+              </Typography>
+            </Button>
+          ) : (
+            <Button
+              onClick={() =>
+                setAmountInput((stakedBalance / 10 ** 18).toString())
+              }
+            >
+              <Typography variant="subtitle2" sx={{ mr: 1 }}>
+                {"Balance"}: {(stakedBalance / 10 ** 18).toFixed(4)}
+              </Typography>
+            </Button>
+          )}
+          <Box textAlign="end" flex={1}>
+            <InputBase
+              autoComplete="off"
+              autoCorrect="off"
+              type="text"
+              placeholder="0.0"
+              spellCheck="false"
+              value={amountInput}
+              inputProps={{
+                style: {
+                  textAlign: "end",
+                  padding: 0,
+                  fontFamily: theme.typography.body1.fontFamily,
+                  fontSize: theme.typography.body1.fontSize,
+                },
+              }}
+              onChange={(e) => {
+                setAmountInput(e.target.value)
+              }}
+              onFocus={(e) => e.target.select()}
+              fullWidth
+            />
+          </Box>
+          {/* <TokenInput
             inputValue={amountInput}
-            token={userGauge.lpToken}
-            max={formatUnits(
-              stakeStatus === "stake"
-                ? userGauge.userWalletLpTokenBalance
-                : userGauge.userStakedLpTokenBalance,
-              userGauge.lpToken.decimals,
-            )}
+            // token={userGauge.lpToken}
+            // max={formatUnits(
+            //   stakeStatus === "stake"
+            //     ? userGauge.userWalletLpTokenBalance
+            //     : userGauge.userStakedLpTokenBalance,
+            //   userGauge.lpToken.decimals,
+            // )}
             showUSDprice={false}
             onChange={setAmountInput}
-          />
+          /> */}
           <Button
             fullWidth
             variant="contained"

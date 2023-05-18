@@ -114,7 +114,7 @@ export function areGaugesActive(chainId?: ChainId): boolean {
 }
 
 export const shouldLoadChildGauges = (chainId: ChainId) =>
-  [ChainId.OPTIMISM, ChainId.ARBITRUM].includes(chainId)
+  [ChainId.OPTIMISM].includes(chainId)
 
 export async function getGaugeData(
   library: Web3Provider,

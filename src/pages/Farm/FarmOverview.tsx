@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import {
   Button,
   Grid,
@@ -24,12 +25,12 @@ import { useActiveWeb3React } from "../../hooks"
 import { useTranslation } from "react-i18next"
 
 interface FarmOverviewProps {
-  farmName: string
+  name: string
   aprs?: GaugeApr[]
-  poolTokens?: string[]
+  // poolTokens?: string[]
   tvl?: BigNumber
   myStake: BigNumber
-  gaugeAddress: string
+  addresses: string
   onClickStake: () => void
   onClickClaim: () => void
 }
@@ -42,13 +43,13 @@ const TokenGroup = styled("div")(() => ({
 }))
 
 export default function FarmOverview({
-  farmName,
-  poolTokens,
+  name,
+  // poolTokens,
   aprs,
   tvl,
   myStake,
   onClickStake,
-  gaugeAddress,
+  addresses,
 }: // onClickClaim,
 FarmOverviewProps): JSX.Element | null {
   const { t } = useTranslation()
@@ -57,6 +58,8 @@ FarmOverviewProps): JSX.Element | null {
   const theme = useTheme()
   const isLgDown = useMediaQuery(theme.breakpoints.down("lg"))
   const userState = useContext(UserStateContext)
+
+  // console.log({ name, tvl, addresses, myStake, aprs })
 
   const amountStakedDeadFusdc =
     userState?.gaugeRewards?.[DEAD_FUSDC_GAUGE_ADDRESS]?.amountStaked || Zero
@@ -91,7 +94,7 @@ FarmOverviewProps): JSX.Element | null {
   }, [account, chainId, library, amountStakedDeadFusdc])
 
   if (!chainId) return null
-  const isDeadFusdcGauge = gaugeAddress === DEAD_FUSDC_GAUGE_ADDRESS
+  const isDeadFusdcGauge = addresses === DEAD_FUSDC_GAUGE_ADDRESS
   if (isDeadFusdcGauge && amountStakedDeadFusdc.eq(Zero)) return null // don't show old gauge to non-stakers
 
   return (
@@ -114,33 +117,34 @@ FarmOverviewProps): JSX.Element | null {
             <Typography variant="h4">FARM</Typography>
             <Typography variant="h2">
               {isDeadFusdcGauge ? "Outdated " : ""}
-              {farmName}
+              {name}
             </Typography>
             <TokenGroup>
-              {farmName === "SDL/WETH SLP" ? (
-                <>
-                  <TokenIcon symbol="SDL" alt="sdl" />
-                  <TokenIcon symbol="WETH" alt="weth" />
-                </>
-              ) : (
-                poolTokens?.map((tokenAddress) => {
-                  const token = tokens?.[tokenAddress]
-                  if (!token) return <div></div>
-                  return (
-                    <TokenIcon
-                      key={token.name}
-                      symbol={token.symbol}
-                      alt={token.symbol}
-                    />
-                  )
-                })
-              )}
+              {
+                name === "SDL/WETH SLP" ? (
+                  <>
+                    <TokenIcon symbol="SDL" alt="sdl" />
+                    <TokenIcon symbol="WETH" alt="weth" />
+                  </>
+                ) : null
+                // poolTokens?.map((tokenAddress) => {
+                //   const token = tokens?.[tokenAddress]
+                //   if (!token) return <div></div>
+                //   return (
+                //     <TokenIcon
+                //       key={token.name}
+                //       symbol={token.symbol}
+                //       alt={token.symbol}
+                //     />
+                //   )
+                // })
+              }
             </TokenGroup>
           </Grid>
 
           {isLgDown && (
             <Grid item xs={6}>
-              <Typography variant="subtitle1">GAUGE TVL</Typography>
+              <Typography variant="subtitle1">FARM TVL</Typography>
               <Typography variant="subtitle1">
                 {tvl ? `$${formatBNToShortString(tvl, 18)}` : "_"}
               </Typography>
@@ -150,7 +154,7 @@ FarmOverviewProps): JSX.Element | null {
         <Grid item container xs={5} lg={3} flexDirection="column" gap={2}>
           <Grid xs={6} lg={12}>
             {isLgDown && <Typography variant="subtitle1">APR</Typography>}
-            {!isDeadFusdcGauge && <GaugeRewardsDisplay aprs={aprs} />}
+            {<GaugeRewardsDisplay aprs={aprs} />}
           </Grid>
           {isLgDown && (
             <Grid xs={6}>

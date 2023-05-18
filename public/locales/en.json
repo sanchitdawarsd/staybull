@@ -319,7 +319,7 @@
   "utilization": "Utilization",
   "veSdl": "veSDL",
   "veSdlCalculator": "veSDL Calculator",
-  "veSdlNetworkText": "Looks like you are in {{chainName}} network.\n Dapp is only available on the Arbitum Mainnet or Goerli!",
+  "veSdlNetworkText": "Looks like you are in {{chainName}} network.\n Dapp is only available on the Arbitrum Mainnet",
   "veSdlMaxBoost": "veSDL for Max boost",
   "veSdlUnlock": "veSDL Unlock",
   "veSdlHolderFeeClaim": "veSDL Holder Fee Claim",

@@ -1,5 +1,12 @@
 /* eslint-disable*/
-import { BN_1E18, BN_DAY_IN_SECONDS } from "../../constants"
+import {
+  BN_1E18,
+  BN_DAY_IN_SECONDS,
+  BULL_ADDRESS,
+  FARMS_MAP,
+  OPTIONS_ADDRESS,
+  PoolTypes,
+} from "../../constants"
 import {
   Box,
   Container,
@@ -13,7 +20,7 @@ import {
 } from "@mui/material"
 import React, { useContext, useEffect, useState } from "react"
 
-import { AprsContext } from "../../providers/AprsProvider"
+import { AprsContext, GaugeApr } from "../../providers/AprsProvider"
 import { BasicPoolsContext } from "../../providers/BasicPoolsProvider"
 import ClaimRewardsDlg from "./ClaimRewardsDlg"
 import FarmOverview from "./FarmOverview"
@@ -23,16 +30,25 @@ import StakeDialog from "./StakeDialog"
 import { UserStateContext } from "../../providers/UserStateProvider"
 import VeSDLWrongNetworkModal from "../VeSDL/VeSDLWrongNetworkModal"
 import { Zero } from "@ethersproject/constants"
-import { formatUnits } from "ethers/lib/utils"
+import { formatUnits, parseUnits } from "ethers/lib/utils"
 import useGaugeTVL from "../../hooks/useGaugeTVL"
+import { useActiveWeb3React } from "../../hooks"
+import { useOracle, useToken } from "../../hooks/useContract"
+import { Erc20 } from "../../../types/ethers-contracts/Erc20"
+import { BigNumber } from "@ethersproject/bignumber"
+import { ethers } from "ethers"
+import { getGaugeContract } from "../../hooks/useContract"
 // import { useTranslation } from "react-i18next"
 
 type ActiveGauge = {
   address: string
+  lpToken: string
   displayName: string
+  rewardsPid: number
 }
 const sushiGaugeName = "SLP-gauge"
 export default function Farm(): JSX.Element {
+  const { account, library, chainId } = useActiveWeb3React()
   const [activeGauge, setActiveGauge] = useState<ActiveGauge | undefined>()
   const [activeDialog, setActiveDialog] = useState<
     "stake" | "claim" | undefined
@@ -42,7 +58,6 @@ export default function Farm(): JSX.Element {
   const gaugeAprs = useContext(AprsContext)
   const userState = useContext(UserStateContext)
   const getGaugeTVL = useGaugeTVL()
-  console.log(gauges, "check2")
   const farmData = Object.values(gauges)
     .filter(({ isKilled }) => !isKilled)
     .map((gauge) => {
@@ -105,6 +120,125 @@ export default function Farm(): JSX.Element {
       // Sort by gauge TVL
       return a.tvl.gt(b.tvl) ? -1 : 1
     })
+
+  const contract = useOracle()
+  const lptoken0: Erc20 = useToken(FARMS_MAP[0].lpToken)!
+  const lptoken1: Erc20 = useToken(FARMS_MAP[1].lpToken)!
+  const rewardTokenContract: Erc20 = useToken(OPTIONS_ADDRESS[chainId!])!
+
+  const [balances, setBalances] = useState<BigNumber[]>([])
+  const [stakedLps, setStakedLps] = useState<BigNumber[]>([])
+  const [stakedAprs, setStakedAprs] = useState<GaugeApr[][]>([])
+  const [bcPrice, setBcPrice] = useState<Number>(0)
+
+  useEffect(() => {
+    async function getBalance() {
+      const price = await contract?.estimateAmountOut(
+        BULL_ADDRESS[chainId!],
+        ethers.BigNumber.from("1000000000000000000"),
+        10,
+      )
+      let decimal: BigNumber = ethers.BigNumber.from(10 ** 6)
+      if (price !== undefined) {
+        setBcPrice(Number(price) / 10 ** 6)
+      }
+      let origbalances: BigNumber[] = await Promise.all([
+        lptoken0.balanceOf(FARMS_MAP[0].addresses),
+        lptoken1.balanceOf(FARMS_MAP[1].addresses),
+      ])
+      let balances: BigNumber[] = await Promise.all([
+        lptoken0.balanceOf(FARMS_MAP[0].addresses),
+        lptoken1.balanceOf(FARMS_MAP[1].addresses),
+      ])
+      if (price !== undefined) {
+        balances[1] = balances[1].mul(price).div(10 ** 6)
+      }
+      setBalances(balances)
+      return origbalances
+    }
+
+    async function getStakedLps() {
+      if (account == null || chainId == null || library == null) {
+        return
+      }
+      const gaugeContract = getGaugeContract(
+        library!,
+        chainId!,
+        FARMS_MAP[0].addresses,
+        account!,
+      )
+      const userInfos = await Promise.all([
+        gaugeContract.userInfo(FARMS_MAP[0].pid, account),
+        gaugeContract.userInfo(FARMS_MAP[1].pid, account),
+      ])
+      const stakedAmounts = userInfos.map(
+        (info: { amount: BigNumber }) => info.amount,
+      )
+      setStakedLps(stakedAmounts)
+    }
+
+    async function getAprs() {
+      console.log(
+        "****************getAprs********************************************",
+      )
+      const appPrice = await contract?.estimateAmountOut(
+        BULL_ADDRESS[chainId!],
+        ethers.BigNumber.from("1000000000000000000"),
+        10,
+      )
+      let rewardBalance: BigNumber[] = await Promise.all([
+        rewardTokenContract.balanceOf(FARMS_MAP[0].addresses),
+        rewardTokenContract.balanceOf(FARMS_MAP[1].addresses),
+      ])
+
+      const balances = await getBalance()
+
+      if (appPrice) {
+        const value0: BigNumber = balances[0].isZero()
+          ? Zero
+          : appPrice
+              .mul(rewardBalance[0].mul(100).div(balances[0]))
+              .div(10 ** 6)
+        const value1: BigNumber = balances[1].isZero()
+          ? Zero
+          : appPrice
+              .mul(rewardBalance[1])
+              .mul(100)
+              .div(balances[1].mul(appPrice.mul(2)))
+
+        const rewardToken = {
+          address: "0xADc97c479C56B0105674d960B528FE8788c99D43",
+          name: "apple",
+          symbol: "app",
+          decimals: 6,
+          isLPToken: true,
+          isOnTokenLists: true,
+          typeAsset: PoolTypes.USD,
+          isSynthetic: true,
+        }
+        const apr0: GaugeApr = {
+          rewardToken,
+          apr: {
+            max: value0,
+          },
+        }
+
+        const apr1: GaugeApr = {
+          rewardToken,
+          apr: {
+            max: value1,
+          },
+        }
+
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", { apr0, apr1 })
+        setStakedAprs([[apr0], [apr1]])
+      }
+    }
+
+    getBalance()
+    getStakedLps()
+    getAprs()
+  }, [lptoken0, lptoken1, library, chainId, account])
 
   useEffect(() => {
     // TODO expose this to user once we have designs
@@ -170,43 +304,48 @@ export default function Farm(): JSX.Element {
         zIndex={(theme) => theme.zIndex.mobileStepper - 1}
         sx={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
       >
-        {farmData.map(
-          ({ gaugeAddress, farmName, aprs, poolTokens, tvl, myStake }) => {
-            return (
-              <Box key={gaugeAddress} my={2}>
-                <Divider />
-                <FarmOverview
-                  gaugeAddress={gaugeAddress}
-                  farmName={farmName}
-                  poolTokens={poolTokens}
-                  aprs={aprs}
-                  tvl={tvl}
-                  myStake={myStake}
-                  onClickStake={() => {
-                    setActiveDialog("stake")
-                    setActiveGauge({
-                      address: gaugeAddress,
-                      displayName: farmName,
-                    })
-                  }}
-                  onClickClaim={() => {
-                    setActiveDialog("claim")
-                    setActiveGauge({
-                      address: gaugeAddress,
-                      displayName: farmName,
-                    })
-                  }}
-                />
-              </Box>
-            )
-          },
-        )}
+        {FARMS_MAP.map(({ addresses, name, lpToken, pid }, index) => {
+          return (
+            <Box key={index} my={2}>
+              {console.log(index, pid, lpToken, "heyy7")}
+              <Divider />
+              <FarmOverview
+                addresses={addresses}
+                name={name}
+                // poolTokens={poolTokens}
+                aprs={stakedAprs[index]}
+                tvl={balances[index]}
+                myStake={stakedLps[index]}
+                onClickStake={() => {
+                  setActiveDialog("stake")
+                  setActiveGauge({
+                    address: addresses,
+                    displayName: name,
+                    lpToken: lpToken,
+                    rewardsPid: pid,
+                  })
+                }}
+                onClickClaim={() => {
+                  setActiveDialog("claim")
+                  setActiveGauge({
+                    address: addresses,
+                    displayName: name,
+                    lpToken: lpToken,
+                    rewardsPid: pid,
+                  })
+                }}
+              />
+            </Box>
+          )
+        })}
       </Box>
-
+      {console.log(activeGauge, activeDialog, "active")}
       <StakeDialog
-        farmName={activeGauge?.displayName}
+        name={activeGauge?.displayName}
         open={activeDialog === "stake"}
-        gaugeAddress={activeGauge?.address}
+        address={activeGauge?.address}
+        lptoken={activeGauge?.lpToken}
+        rewardPids={activeGauge?.rewardsPid}
         onClose={() => {
           setActiveDialog(undefined)
           setActiveGauge(undefined)
@@ -218,7 +357,9 @@ export default function Farm(): JSX.Element {
       <ClaimRewardsDlg
         open={activeDialog === "claim"}
         gaugeAddress={activeGauge?.address}
+        lptoken={activeGauge?.lpToken}
         displayName={activeGauge?.displayName}
+        rewardPid={activeGauge?.rewardsPid}
         onClose={() => {
           setActiveDialog(undefined)
           setActiveGauge(undefined)
@@ -250,7 +391,7 @@ function FarmListHeader(): JSX.Element {
       </Grid>
       {!isLgDown && (
         <Grid item xs={1.5}>
-          <Typography>GAUGE TVL</Typography>
+          <Typography>FARM TVL</Typography>
         </Grid>
       )}
       {!isLgDown && (
