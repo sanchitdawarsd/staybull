@@ -65,7 +65,7 @@ export default function Pages() {
         )}
       </Route>
       <Route exact path="/risk" component={Risk} />
-      <Route exact path="/options" component={Options} />
+      <Route exact path="/unlock" component={Options} />
       <Route exact path="/vesting-claim" component={VestingClaim} />
       <Route exact path="/farm" component={Farm} />
       <Route exact path="/vesdl" component={VeSDL} />

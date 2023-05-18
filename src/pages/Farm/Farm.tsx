@@ -267,7 +267,7 @@ export default function Farm(): JSX.Element {
           </Typography>
         </div>
         <div>
-          <Typography
+          {/* <Typography
             sx={{
               fontFamily: "POPPINS",
               fontSize: "16px",
@@ -277,7 +277,7 @@ export default function Farm(): JSX.Element {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,
             purus sit amet luctus venenatis, lectus magna fringilla urna,
             porttitor
-          </Typography>
+          </Typography> */}
         </div>
       </Stack>
 

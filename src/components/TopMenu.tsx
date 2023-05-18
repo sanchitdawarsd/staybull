@@ -239,7 +239,7 @@ function MenuList() {
         </NavMenu>
       )} */}
       {isMainnet(chainId) && (
-        <NavMenu to="/options" selected={activeTab === "options"}>
+        <NavMenu to="/unlock" selected={activeTab === "options"}>
           {t("Unlock $oBULL")}
         </NavMenu>
       )}

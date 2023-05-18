@@ -43,8 +43,9 @@ const InputField: React.FC<myProps> = ({
             {name}
           </Typography>
         </div>
+
         <Typography fontSize={11} onClick={() => onInput(balance.toString())}>
-          Balance: {parseInt(balance.toString()).toFixed(4)}
+          Balance: {parseFloat(balance.toString()).toFixed(5)}
         </Typography>
       </div>
     </Box>
