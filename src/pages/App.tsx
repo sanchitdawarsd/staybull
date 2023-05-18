@@ -24,7 +24,7 @@ import TokensProvider from "../providers/TokensProvider"
 import TopMenu from "../components/TopMenu"
 import UserStateProvider from "../providers/UserStateProvider"
 import Web3ReactManager from "../components/Web3ReactManager"
-import WrongNetworkModal from "../components/WrongNetworkModal"
+import VeSDLWrongNetworkModal from "./VeSDL/VeSDLWrongNetworkModal"
 import fetchGasPrices from "../utils/updateGasPrices"
 import fetchSdlWethSushiPoolInfo from "../utils/updateSdlWethSushiInfo"
 import fetchTokenPricesUSD from "../utils/updateTokenPrices"
@@ -77,7 +77,7 @@ export default function App(): ReactElement {
                                   </Suspense>
                                 </Box>
                                 <Footer />
-                                <WrongNetworkModal />
+                                <VeSDLWrongNetworkModal />
                                 <ToastContainer
                                   theme={
                                     theme.palette.mode === "dark"

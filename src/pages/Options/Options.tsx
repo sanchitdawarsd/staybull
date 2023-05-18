@@ -5,13 +5,8 @@ import BullLogo from "../../assets/bullLogo.png"
 import InputField from "./InputField"
 import OBULLogo from "../../assets/oBullLogo.png"
 import React, { useEffect, useState } from "react"
-import {
-  useOptions,
-  useOracle,
-  usePaymentToken,
-  useUsdc,
-} from "../../hooks/useContract"
-import UsdcLogo from "../../assets/icons/usdc.svg"
+import { useOptions, useOracle, usePaymentToken } from "../../hooks/useContract"
+import ethLogo from "../../assets/icons/eth.svg"
 import { ethers } from "ethers"
 import { useActiveWeb3React } from "../../hooks"
 import { createMultiCallContract, getMulticallProvider } from "../../utils"
@@ -19,10 +14,11 @@ import {
   BULL_ADDRESS,
   OPTIONS_ADDRESS,
   PAYMENT_CONTRACT_ADDRESSES,
-  USDC_CONTRACT_ADDRESSES,
 } from "../../constants"
 import { Erc20 } from "../../../types/ethers-contracts/Erc20"
 import ERC20_ABI from "../../constants/abis/erc20.json"
+import { enqueuePromiseToast } from "../../components/Toastify"
+import { chain } from "lodash"
 
 const Options = () => {
   const [price, setPrice] = useState<any>()
@@ -41,14 +37,14 @@ const Options = () => {
     if (Number(e) <= cap) {
       setvalue(e)
       if (e) {
-        setusdcvalue(Math.ceil((parseInt(e) * price) / 10 ** 6))
+        setusdcvalue(Math.ceil((parseInt(e) * price) / 10 ** 18))
       } else {
         setusdcvalue(0)
       }
     } else {
       setvalue(cap.toString())
       if (e) {
-        setusdcvalue(Math.ceil(parseInt(cap.toString()) * price) / 10 ** 6)
+        setusdcvalue(Math.ceil(parseInt(cap.toString()) * price) / 10 ** 18)
       } else {
         setusdcvalue(0)
       }
@@ -58,7 +54,7 @@ const Options = () => {
   }
   const contract = useOracle()
   const optionsContract = useOptions()
-  const usdcContract = usePaymentToken()
+  const wethContract = usePaymentToken()
 
   const exercise = async (
     value: any,
@@ -74,25 +70,28 @@ const Options = () => {
       console.log(ethers.utils.parseUnits(value, 18).toString())
       try {
         if (usdcallowance < usdcvalue) {
-          const tx1 = await usdcContract?.["approve(address,uint256)"](
+          const tx1 = await wethContract?.["approve(address,uint256)"](
             OPTIONS_ADDRESS[chainId!],
-            ethers.utils.parseUnits(usdcvalue.toString(), 6),
+            ethers.utils.parseUnits(usdcvalue.toString(), 18),
           )
-          await tx1?.wait()
+          await enqueuePromiseToast(chainId!, tx1?.wait()!, "tokenApproval", {
+            tokenName: "USDC",
+          })
+          //await tx1?.wait()
         }
         console.log(
           ethers.utils.parseUnits(cvalue.toString(), 18).toString(),
-          ethers.utils.parseUnits(cusdcvalue.toString(), 6).toString(),
+          ethers.utils.parseUnits(cusdcvalue.toString(), 18).toString(),
           "price",
         )
         const tx2 = await optionsContract?.[
           "exercise(uint256,uint256,address)"
         ](
           ethers.utils.parseUnits(cvalue.toString(), 18),
-          ethers.utils.parseUnits(usdcvalue.toString(), 6),
+          ethers.utils.parseUnits(usdcvalue.toString(), 18),
           account,
         )
-        await tx2?.wait()
+        await enqueuePromiseToast(chainId!, tx2?.wait()!, "swap")
       } catch (e) {
         console.log(e)
       }
@@ -103,19 +102,19 @@ const Options = () => {
     const getdata = async () => {
       if (contract) {
         const price = await contract.estimateAmountOut(
-          "0x1bAAED97039B00e62183aA70642F646124b6b001",
+          BULL_ADDRESS[chainId!],
           ethers.BigNumber.from("1000000000000000000"),
           10,
         )
         setPrice(price)
       }
-      if (usdcContract && library && chainId && account) {
+      if (wethContract && library && chainId && account) {
         const ethCallProvider = await getMulticallProvider(library, chainId)
         const tokenContract = createMultiCallContract<Erc20>(
           OPTIONS_ADDRESS[chainId],
           ERC20_ABI,
         )
-        const usdcContract = createMultiCallContract<Erc20>(
+        const wethContract = createMultiCallContract<Erc20>(
           PAYMENT_CONTRACT_ADDRESSES[chainId],
           ERC20_ABI,
         )
@@ -125,8 +124,8 @@ const Options = () => {
         )
         const a = await ethCallProvider.tryAll([
           tokenContract.balanceOf(account),
-          usdcContract.balanceOf(account),
-          usdcContract.allowance(account, OPTIONS_ADDRESS[chainId]),
+          wethContract.balanceOf(account),
+          wethContract.allowance(account, OPTIONS_ADDRESS[chainId]),
           bullContract.balanceOf(account),
         ])
 
@@ -159,7 +158,7 @@ const Options = () => {
       </Typography>
       <Typography variant="body1" textAlign={"center"} mt={2} fontSize={14}>
         oBULL gives its holder the right to purchase BULL at a discount price.
-        Pay USDC to convert your oBULL to BULL.
+        Pay WETH to convert your oBULL to BULL.
       </Typography>
 
       <Box
@@ -171,8 +170,8 @@ const Options = () => {
         }}
       >
         <Typography variant="body1" mt={1} fontSize={12}>
-          $oBULL Price: ${(price / 10 ** 6).toFixed(15)} || $BULL Price $
-          {((price * 2) / 10 ** 6).toFixed(15)} || Discount: 50%
+          $oBULL Price: {(price / 10 ** 18).toFixed(15)} $WETH || $BULL Price
+          {((price * 2) / 10 ** 18).toFixed(15)} $WETH || Discount: 50%
         </Typography>
         <div style={{ margin: "auto", textAlign: "center" }}>
           <InputField
@@ -183,9 +182,9 @@ const Options = () => {
             value={value}
           />
           <InputField
-            balance={usdcbalance / 10 ** 6}
-            name={"USDC"}
-            logoUrl={UsdcLogo}
+            balance={usdcbalance / 10 ** 18}
+            name={"WETH"}
+            logoUrl={ethLogo}
             onInput={handleInputChange}
             value={usdcvalue}
           />
@@ -211,16 +210,16 @@ const Options = () => {
             exercise(
               value,
               usdcvalue,
-              usdcbalance / 10 ** 6,
-              usdcallowance / 10 ** 6,
+              usdcbalance / 10 ** 18,
+              usdcallowance / 10 ** 18,
             )
           }
         >
           {usdcvalue == 0
             ? "Enter amount"
-            : usdcbalance / 10 ** 6 < usdcvalue
-            ? "Not enough usdc balance to convert"
-            : usdcallowance / 10 ** 6 < usdcvalue
+            : usdcbalance / 10 ** 18 < usdcvalue
+            ? "Not enough weth balance to convert"
+            : usdcallowance / 10 ** 18 < usdcvalue
             ? "Approve and Convert"
             : "CONVERT TO BULL"}
         </Button>

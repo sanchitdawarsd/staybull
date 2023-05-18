@@ -542,6 +542,6 @@ export const getRootGaugeFactory = (
 
 export const isMainnet = (chainId?: ChainId): boolean => {
   return (
-    !!chainId && (chainId === ChainId.GOERLI || chainId === ChainId.MAINNET)
+    !!chainId && (chainId === ChainId.ARBITRUM || chainId === ChainId.GOERLI)
   )
 }

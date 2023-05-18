@@ -2,7 +2,9 @@
 import {
   BN_1E18,
   BN_DAY_IN_SECONDS,
+  BULL_ADDRESS,
   FARMS_MAP,
+  OPTIONS_ADDRESS,
   PoolTypes,
 } from "../../constants"
 import {
@@ -122,9 +124,7 @@ export default function Farm(): JSX.Element {
   const contract = useOracle()
   const lptoken0: Erc20 = useToken(FARMS_MAP[0].lpToken)!
   const lptoken1: Erc20 = useToken(FARMS_MAP[1].lpToken)!
-  const rewardTokenContract: Erc20 = useToken(
-    "0xbB01AFf00d6786B63325771Fb21A6F37564ddCBb",
-  )!
+  const rewardTokenContract: Erc20 = useToken(OPTIONS_ADDRESS[chainId!])!
 
   const [balances, setBalances] = useState<BigNumber[]>([])
   const [stakedLps, setStakedLps] = useState<BigNumber[]>([])
@@ -134,7 +134,7 @@ export default function Farm(): JSX.Element {
   useEffect(() => {
     async function getBalance() {
       const price = await contract?.estimateAmountOut(
-        "0x1bAAED97039B00e62183aA70642F646124b6b001",
+        BULL_ADDRESS[chainId!],
         ethers.BigNumber.from("1000000000000000000"),
         10,
       )
@@ -182,7 +182,7 @@ export default function Farm(): JSX.Element {
         "****************getAprs********************************************",
       )
       const appPrice = await contract?.estimateAmountOut(
-        "0x1bAAED97039B00e62183aA70642F646124b6b001",
+        BULL_ADDRESS[chainId!],
         ethers.BigNumber.from("1000000000000000000"),
         10,
       )

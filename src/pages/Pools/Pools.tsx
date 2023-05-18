@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import {
   Box,
   Button,
@@ -142,16 +143,16 @@ function Pools(): ReactElement | null {
           <Grid container direction="row" spacing={1} my={3} ml="0px">
             {[
               ["all", "ALL"] as const,
-              [PoolTypes.BTC, "BTC"] as const,
-              [PoolTypes.ETH, "ETH"] as const,
+              // [PoolTypes.BTC, "BTC"] as const,
+              // [PoolTypes.ETH, "ETH"] as const,
               [PoolTypes.USD, "USD"] as const,
-              ["outdated", "OUTDATED"] as const,
+              // ["outdated", "OUTDATED"] as const,
             ].map(([filterKey, text], index) => (
               <Grid key={filterKey} xs={index === 4 ? 4 : 2}>
                 <Chip
                   variant={filter === filterKey ? "filled" : "text"}
                   size="medium"
-                  color={filterKey === "outdated" ? "warning" : "default"}
+                  color={"default"}
                   label={text}
                   onClick={(): void => setFilter(filterKey)}
                 />
@@ -168,7 +169,7 @@ function Pools(): ReactElement | null {
             sx={{ display: "flex", alignItems: "start" }}
             width="100%"
           >
-            <Button
+            {/* <Button
               variant="outlined"
               color="secondary"
               sx={{
@@ -182,7 +183,7 @@ function Pools(): ReactElement | null {
               onClick={() => history.push("/pools/create")}
             >
               Create Pool
-            </Button>
+            </Button> */}
           </Box>
         )}
       </Stack>

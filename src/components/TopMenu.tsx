@@ -270,7 +270,8 @@ function SDLPrice({ sdlPrice }: SDLPriceProps): ReactElement | null {
         display: { xs: "none", md: "inline-flex" },
       }}
     >
-      {`$${sdlPrice.toFixed(2)}`}
+      {"HOME"}
+      {/* {`$${sdlPrice.toFixed(2)}`} */}
     </Button>
   )
 }
