@@ -1,30 +1,51 @@
+/*eslint-disable*/
 import { Button, DialogContent, Typography } from "@mui/material"
 import React, { useEffect, useState } from "react"
 
 import Dialog from "../../components/Dialog"
 import { SUPPORTED_NETWORKS } from "../../constants/networks"
 import { areGaugesActive } from "../../utils/gauges"
-import { useActiveWeb3React } from "../../hooks"
+import { useActiveWeb3React, useEagerConnect } from "../../hooks"
 import { useTranslation } from "react-i18next"
+import { injectedMetaMaskProvider } from "../../connectors"
+import { useWeb3React as useWeb3ReactCore } from "@web3-react/core"
 
 export default function VeSDLWrongNetworkModal(): JSX.Element {
   const [openDialog, setOpenDialog] = useState(false)
+  const { active, activate, error } = useWeb3ReactCore()
   const { library, account, chainId } = useActiveWeb3React()
   const { t } = useTranslation()
   const handleConnectMainnet = () => {
-    void library?.send("wallet_switchEthereumChain", [
-      { chainId: "0xa4b1" },
-      account,
-    ])
+    account
+      ? void library?.send("wallet_switchEthereumChain", [
+          { chainId: "0xa4b1" },
+          account,
+        ])
+      : null
   }
   const chainName = chainId && SUPPORTED_NETWORKS[chainId]?.chainName
 
   useEffect(() => {
     if (chainId) {
       const networkName = SUPPORTED_NETWORKS[chainId]?.chainName
-      setOpenDialog(!areGaugesActive(chainId) && !!networkName)
+
+      // void injectedMetaMaskProvider.isAuthorized().then((isAuthorized) => {
+      //   if (!isAuthorized) {
+      //     activate(injectedMetaMaskProvider, undefined, true)
+      //   }
+      // })
+
+      console.log(
+        !areGaugesActive(chainId) && !!networkName,
+        areGaugesActive(chainId),
+        chainId,
+        networkName,
+      )
+      if (account) {
+        setOpenDialog(!areGaugesActive(chainId) && !!networkName)
+      }
     }
-  }, [chainId])
+  }, [chainId, account])
 
   return (
     <Dialog

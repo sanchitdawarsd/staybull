@@ -90,19 +90,19 @@ const nativeCurrencyEth = {
 }
 // refer to https://github.com/sushiswap/sushiswap-interface/blob/canary/src/modals/NetworkModal/index.tsx#L13
 export const SUPPORTED_NETWORKS: SupportedNetworks = {
-  [ChainId.MAINNET]: {
-    chainId: "0x1",
-    chainName: "Ethereum",
-    nativeCurrency: nativeCurrencyEth,
-    rpcUrls: ["https://mainnet.infura.io/v3"],
-    blockExplorerUrls: ["https://etherscan.com"],
-  },
   [ChainId.ARBITRUM]: {
     chainId: "0xA4B1",
     chainName: "Arbitrum",
     nativeCurrency: nativeCurrencyEth,
     rpcUrls: ["https://arb1.arbitrum.io/rpc"],
     blockExplorerUrls: ["https://mainnet-arb-explorer.netlify.app"],
+  },
+  [ChainId.MAINNET]: {
+    chainId: "0x1",
+    chainName: "Ethereum",
+    nativeCurrency: nativeCurrencyEth,
+    rpcUrls: ["https://mainnet.infura.io/v3"],
+    blockExplorerUrls: ["https://etherscan.com"],
   },
   [ChainId.OPTIMISM]: {
     chainId: "0xA",
