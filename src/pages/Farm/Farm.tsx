@@ -138,10 +138,9 @@ export default function Farm(): JSX.Element {
         ethers.BigNumber.from("1000000000000000000"),
         10,
       )
-      let decimal: BigNumber = ethers.BigNumber.from(10 ** 6)
-      if (price !== undefined) {
-        setBcPrice(Number(price) / 10 ** 6)
-      }
+      // if (price !== undefined) {
+      //   setBcPrice(Number(price) / 10 ** 18)
+      // }
       let origbalances: BigNumber[] = await Promise.all([
         lptoken0.balanceOf(FARMS_MAP[0].addresses),
         lptoken1.balanceOf(FARMS_MAP[1].addresses),
@@ -151,7 +150,10 @@ export default function Farm(): JSX.Element {
         lptoken1.balanceOf(FARMS_MAP[1].addresses),
       ])
       if (price !== undefined) {
-        balances[1] = balances[1].mul(price).div(10 ** 6)
+        balances[1] = balances[1]
+          .mul(price)
+          .mul("1800")
+          .div(BigNumber.from("1000000000000000000"))
       }
       setBalances(balances)
       return origbalances
