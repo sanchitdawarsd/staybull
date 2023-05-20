@@ -208,7 +208,7 @@ const SwapPage = (props: Props): ReactElement => {
         >
           SWAP PAGE
         </Typography>
-        <Typography
+        {/* <Typography
           maxWidth="100%"
           width="340px"
           sx={{
@@ -221,7 +221,7 @@ const SwapPage = (props: Props): ReactElement => {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,
           purus sit amet luctus venenatis, lectus magna fringilla urna,
           porttitor
-        </Typography>
+        </Typography> */}
       </Grid>
       <Grid item xs={4} width="100%">
         <Paper style={{ borderRadius: 0 }}>

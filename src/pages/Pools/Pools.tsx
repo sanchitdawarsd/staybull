@@ -90,7 +90,7 @@ function Pools(): ReactElement | null {
           </Typography>
         </div>
         <div>
-          <Typography
+          {/* <Typography
             sx={{
               fontFamily: "POPPINS",
               fontSize: "16px",
@@ -100,7 +100,7 @@ function Pools(): ReactElement | null {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit ut aliquam,
             purus sit amet luctus venenatis, lectus magna fringilla urna,
             porttitor
-          </Typography>
+          </Typography> */}
         </div>
       </Stack>
       <Stack

@@ -37,14 +37,14 @@ const Options = () => {
     if (Number(e) <= cap) {
       setvalue(e)
       if (e) {
-        setusdcvalue(Math.ceil((parseInt(e) * price) / 10 ** 18))
+        setusdcvalue((parseInt(e) * price) / 10 ** 18)
       } else {
         setusdcvalue(0)
       }
     } else {
       setvalue(cap.toString())
       if (e) {
-        setusdcvalue(Math.ceil(parseInt(cap.toString()) * price) / 10 ** 18)
+        setusdcvalue((parseInt(cap.toString()) * price) / 10 ** 18)
       } else {
         setusdcvalue(0)
       }
@@ -75,9 +75,8 @@ const Options = () => {
             ethers.utils.parseUnits(usdcvalue.toString(), 18),
           )
           await enqueuePromiseToast(chainId!, tx1?.wait()!, "tokenApproval", {
-            tokenName: "USDC",
+            tokenName: "WETH",
           })
-          //await tx1?.wait()
         }
         console.log(
           ethers.utils.parseUnits(cvalue.toString(), 18).toString(),
@@ -181,6 +180,7 @@ const Options = () => {
             onInput={handleInputChange}
             value={value}
           />
+          {console.log(usdcbalance.toString(), "price")}
           <InputField
             balance={usdcbalance / 10 ** 18}
             name={"WETH"}
