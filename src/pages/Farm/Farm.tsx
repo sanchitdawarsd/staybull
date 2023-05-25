@@ -300,7 +300,6 @@ export default function Farm(): JSX.Element {
           <FarmListHeader />
         </Paper>
       </Box>
-
       <Box
         // bgcolor={(theme) => theme.palette.background.paper}
         zIndex={(theme) => theme.zIndex.mobileStepper - 1}

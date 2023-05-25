@@ -17,6 +17,7 @@ const Risk = lazy(() =>
 const Swap = lazy(() =>
   import("./Swap").then(({ Swap }) => ({ default: Swap })),
 )
+// const Buy = lazy(() => import("./Buy").then(({ Buy }) => ({ default: Buy })))
 const VeSDL = lazy(() =>
   import("./VeSDL").then(({ VeSDL }) => ({ default: VeSDL })),
 )

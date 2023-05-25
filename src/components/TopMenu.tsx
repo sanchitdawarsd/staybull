@@ -33,7 +33,14 @@ import { useSelector } from "react-redux"
 import { useTranslation } from "react-i18next"
 import background from "../assets/bull-back.png"
 
-type ActiveTabType = "" | "pools" | "risk" | "vesdl" | "farm" | "options"
+type ActiveTabType =
+  | ""
+  | "pools"
+  | "risk"
+  | "vesdl"
+  | "farm"
+  | "options"
+  | "buy"
 
 const NavMenu = styled(NavLink)<NavLinkProps & { selected: boolean }>(
   ({ theme, selected }) => {
@@ -212,8 +219,30 @@ function MenuList() {
   const { pathname } = useLocation()
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   const activeTab = pathname.split("/")[1] as ActiveTabType
+  const theme = useTheme()
+  const myStyle = {
+    fontWeight: "normal",
+    textDecoration: "none",
+    fontSize: theme.typography.h3.fontSize,
+    color: theme.palette.text.primary,
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+  }
+
   return (
     <React.Fragment>
+      {isMainnet(chainId) && (
+        // <NavMenu to="/buy" selected={activeTab === "buy"}>
+
+        <a
+          href="https://app.uniswap.org/#/swap?inputCurrency=0x82aF49447D8a07e3bd95BD0d56f35241523fBab1&outputCurrency=0xccf8fb2374b508986a527deb89ef6ba340c83e46"
+          target="_blank"
+          style={myStyle}
+        >
+          {t("Buy")}
+        </a>
+        // </NavMenu>
+      )}
       <NavMenu
         data-testid="swapNavLink"
         to="/"
